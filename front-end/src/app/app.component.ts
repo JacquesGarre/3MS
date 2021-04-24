@@ -34,6 +34,7 @@ import {
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
+
     title = 'front-end';
     faTachometerAlt = faTachometerAlt;
     faLaughWink = faLaughWink;
@@ -61,4 +62,5 @@ export class AppComponent {
     faEllipsisV = faEllipsisV;
     faCircle = faCircle;
     faAngleUp = faAngleUp;
+
 }

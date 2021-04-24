@@ -29,6 +29,8 @@ import {
     faChevronLeft,
     faChevronRight
 } from '@fortawesome/free-solid-svg-icons';
+import { ThemeSettings } from '../Models/ThemeSettings';
+import { ApiService } from '../api/api.service';
 
 @Component({
     selector: 'app-sidebar',
@@ -66,9 +68,17 @@ export class SidebarComponent implements OnInit {
     faChevronLeft = faChevronLeft;
     faChevronRight = faChevronRight;
 
-    constructor() { }
+    sidebarBgColor = '#4e73df'; // Default color
+    settings: ThemeSettings[] = [];
+
+    constructor(private apiService: ApiService) {}
 
     ngOnInit(): void {
+        this.apiService.getThemeSettings().subscribe((data: any)=>{
+            this.sidebarBgColor = data.filter((setting: any) => setting.name == 'sidebar_bg_color')[0].value;
+        }) 
+        console.log("sidebarBgColor")
+        console.log(this.sidebarBgColor)
     }
 
 }
