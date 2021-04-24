@@ -25,7 +25,9 @@ import {
     faComments,
     faEllipsisV,
     faCircle,
-    faAngleUp
+    faAngleUp,
+    faChevronLeft,
+    faChevronRight
 } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
@@ -61,6 +63,8 @@ export class SidebarComponent implements OnInit {
     faEllipsisV = faEllipsisV;
     faCircle = faCircle;
     faAngleUp = faAngleUp;
+    faChevronLeft = faChevronLeft;
+    faChevronRight = faChevronRight;
 
     constructor() { }
 
