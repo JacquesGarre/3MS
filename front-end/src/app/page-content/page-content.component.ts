@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
-import { 
-    faTachometerAlt, 
+import { Component, OnInit } from '@angular/core';
+import {
+    faTachometerAlt,
     faLaughWink,
     faCog,
     faCogs,
@@ -29,11 +29,12 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+    selector: 'app-page-content',
+    templateUrl: './page-content.component.html',
+    styleUrls: ['./page-content.component.css']
 })
-export class AppComponent {
+export class PageContentComponent implements OnInit {
+    
     title = 'front-end';
     faTachometerAlt = faTachometerAlt;
     faLaughWink = faLaughWink;
@@ -61,4 +62,10 @@ export class AppComponent {
     faEllipsisV = faEllipsisV;
     faCircle = faCircle;
     faAngleUp = faAngleUp;
+
+    constructor() { }
+
+    ngOnInit(): void {
+    }
+
 }
