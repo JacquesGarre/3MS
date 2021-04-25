@@ -2,9 +2,9 @@ export class Modules {
     id?: any;
     slug?: string;
     name?: string;
-    form_id?: number;
+    formId?: number;
     active?: boolean;
-    limit_per_page?: number;
-    menu_order?: number;
+    limitPerPage?: number;
+    menuOrder?: number;
     icon?: string;
 }

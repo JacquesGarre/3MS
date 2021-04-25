@@ -23,7 +23,7 @@ import { NgxUiLoaderModule,
     POSITION,
     PB_DIRECTION } from "ngx-ui-loader";
 import { ModuleComponent } from './module/module.component';
-import { ModuleAddModalComponent } from './module-add-modal/module-add-modal.component';
+import { ModuleAddModalComponent } from './pages/modules-page/module-add-modal/module-add-modal.component';
 
 const ngxUiLoaderConfig: NgxUiLoaderConfig = {
     "bgsColor": "red",

@@ -25,7 +25,7 @@ export class ModulesPageComponent implements OnInit {
             },
             error => {
                 console.log(error);
-        });;
+        });
     }
 
     ngOnInit(): void {

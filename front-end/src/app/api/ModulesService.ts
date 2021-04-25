@@ -26,11 +26,26 @@ export class ModulesService {
         return this.http.get<Modules[]>(baseUrl);
     }
 
+    getAllActive(): Observable<Modules[]> {
+        return this.http.get<Modules[]>(`${baseUrl}?active=true`);
+    }
+
     get(id: any): Observable<Modules> {
         return this.http.get(`${baseUrl}/${id}`);
     }
 
-    create(data: any): Observable<any> {
+    addModule(modules: Modules[], module: Modules) {
+        this.create(module).subscribe(
+            module => {
+                modules.push(module);
+                this.modulesSource.next(modules);
+            },
+            error => {
+                console.log(error);
+        });
+    }
+
+    create(data: Modules): Observable<any> {
         return this.http.post(baseUrl, data);
     }
 
