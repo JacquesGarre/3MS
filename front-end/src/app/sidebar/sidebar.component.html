@@ -6,7 +6,7 @@
         <div class="sidebar-brand-icon rotate-n-15">
             <fa-icon [icon]="faLaughWink"></fa-icon>
         </div>
-        <div class="sidebar-brand-text mx-3">3MS</div>
+        <div class="sidebar-brand-text mx-3">{{appTitle}}</div>
     </a>
 
     <!-- Divider -->
@@ -14,7 +14,7 @@
 
     <!-- Nav Item - Dashboard -->
     <li class="nav-item">
-        <a class="nav-link" routerLink="/" routerLinkActive="active">
+        <a class="nav-link" routerLink="/" routerLinkActive="active" [style.color]="sidebarFontColor">
             <fa-icon [icon]="faTachometerAlt" class="mr-2"></fa-icon>
             <span>Home</span>
         </a>
@@ -30,7 +30,7 @@
 
     <!-- Nav Item - Settings -->
     <li class="nav-item">
-        <a class="nav-link" routerLink="/settings-page" routerLinkActive="active">
+        <a class="nav-link" routerLink="/settings-page" routerLinkActive="active" [style.color]="sidebarFontColor">
             <fa-icon [icon]="faCog" class="mr-2"></fa-icon>
             <span>Settings</span>
             <fa-icon [icon]="faChevronRight" class="float-right mt-1"></fa-icon>
@@ -38,7 +38,7 @@
     </li>
 
     <li class="nav-item">
-        <a class="nav-link" routerLink="/modules-page" routerLinkActive="active">
+        <a class="nav-link" routerLink="/modules-page" routerLinkActive="active"  [style.color]="sidebarFontColor">
             <fa-icon [icon]="faWrench" class="mr-2"></fa-icon>
             <span>Modules</span>
             <fa-icon [icon]="faChevronRight" class="float-right mt-1"></fa-icon>
@@ -70,11 +70,11 @@
 
     <!-- Heading -->
     <div class="sidebar-heading">
-        Addons
+        Modules
     </div>
 
     <!-- Nav Item - Pages Collapse Menu -->
-    <li class="nav-item">
+    <!-- <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
             aria-expanded="true" aria-controls="collapsePages">
             <fa-icon [icon]="faFolder" class="mr-2"></fa-icon>
@@ -93,25 +93,7 @@
                 <a class="collapse-item" href="blank.html">Blank Page</a>
             </div>
         </div>
-    </li>
-
-    <!-- Nav Item - Charts -->
-    <li class="nav-item">
-        <a class="nav-link" href="charts.html">
-            <fa-icon [icon]="faChartArea" class="mr-2"></fa-icon>
-            <span>Charts</span>
-            <fa-icon [icon]="faChevronRight" class="float-right mt-1"></fa-icon>
-        </a>
-    </li>
-
-    <!-- Nav Item - Tables -->
-    <li class="nav-item">
-        <a class="nav-link" href="tables.html">
-            <fa-icon [icon]="faTable" class="mr-2"></fa-icon>
-            <span>Tables</span>
-            <fa-icon [icon]="faChevronRight" class="float-right mt-1"></fa-icon>
-        </a>
-    </li>
+    </li> -->
 
     <!-- Divider -->
     <hr class="sidebar-divider d-none d-md-block mt-2">

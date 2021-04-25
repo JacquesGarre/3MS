@@ -1,16 +1,40 @@
 <div class="row">
 
     <div class="col-lg-6 mb-4">
-        <div class="card bg-primary text-white shadow">
+        <div class="card text-white shadow">
             <div class="card-body" 
                 [style.backgroundColor]="sidebarBgColor"
+                [style.color]="sidebarFontColor"
                 [cpPosition]="'bottom'"
                 [cpPositionOffset]="'50%'"
                 [cpPositionRelativeToArrow]="true"
-                [(colorPicker)]="sidebarBgColor">
+                [cpSaveClickOutside]="true"
+                [(colorPicker)]="sidebarBgColor"
+                (colorPickerClose)="sidebarBgColorOnChange()"
+                >
                 Sidebar background-color
                 <div class="text-white-50 small">
                     {{sidebarBgColor}}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6 mb-4">
+        <div class="card text-white shadow">
+            <div class="card-body" 
+                [style.backgroundColor]="sidebarBgColor"
+                [style.color]="sidebarFontColor"
+                [cpPosition]="'bottom'"
+                [cpPositionOffset]="'50%'"
+                [cpPositionRelativeToArrow]="true"
+                [cpSaveClickOutside]="true"
+                [(colorPicker)]="sidebarFontColor"
+                (colorPickerClose)="sidebarFontColorOnChange()"
+                >
+                Sidebar font-color
+                <div class="text-white-50 small">
+                    {{sidebarFontColor}}
                 </div>
             </div>
         </div>

@@ -15,8 +15,42 @@ import { HomePageComponent } from './pages/home-page/home-page.component';
 import { ColorsFormComponent } from './pages/settings-page/colors-form/colors-form.component';
 import { FormsModule } from '@angular/forms';
 import { ColorPickerModule } from 'ngx-color-picker';
-
 import { HttpClientModule } from '@angular/common/http';
+import { NgxUiLoaderModule,
+    NgxUiLoaderConfig,
+    NgxUiLoaderHttpModule,
+    SPINNER,
+    POSITION,
+    PB_DIRECTION } from "ngx-ui-loader";
+
+const ngxUiLoaderConfig: NgxUiLoaderConfig = {
+    "bgsColor": "red",
+    "bgsOpacity": 0.1,
+    "bgsPosition": "bottom-right",
+    "bgsSize": 20,
+    "bgsType": "ball-spin-clockwise",
+    "blur": 10,
+    "delay": 0,
+    "fastFadeOut": true,
+    "fgsColor": "#ffffff",
+    "fgsPosition": "center-center",
+    "fgsSize": 70,
+    "fgsType": "cube-grid",
+    "gap": 24,
+    "logoPosition": "center-center",
+    "logoSize": 120,
+    "logoUrl": "",
+    "masterLoaderId": "master",
+    "overlayBorderRadius": "0",
+    "overlayColor": "rgba(0,0,0)",
+    "pbColor": "#4e73df",
+    "pbDirection": "ltr",
+    "pbThickness": 3,
+    "hasProgressBar": true,
+    "text": "",
+    "textColor": "#FFFFFF",
+    "textPosition": "center-center",
+}
 
 @NgModule({
   declarations: [
@@ -36,7 +70,9 @@ import { HttpClientModule } from '@angular/common/http';
     FontAwesomeModule,
     NgbModule,
     FormsModule,
-    ColorPickerModule
+    ColorPickerModule,
+    NgxUiLoaderModule.forRoot(ngxUiLoaderConfig), 
+    NgxUiLoaderHttpModule.forRoot({ showForeground: false })
   ],
   providers: [{provide: APP_BASE_HREF, useValue: '/'}],
   bootstrap: [AppComponent]

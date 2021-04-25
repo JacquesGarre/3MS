@@ -63,4 +63,9 @@ export class AppComponent {
     faCircle = faCircle;
     faAngleUp = faAngleUp;
 
+    constructor() {}
+
+    ngOnInit(): void {
+    }
+
 }

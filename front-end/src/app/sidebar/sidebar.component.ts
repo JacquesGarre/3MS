@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import {
     faTachometerAlt,
     faLaughWink,
@@ -30,7 +30,8 @@ import {
     faChevronRight
 } from '@fortawesome/free-solid-svg-icons';
 import { ThemeSettings } from '../Models/ThemeSettings';
-import { ApiService } from '../api/api.service';
+import { ThemeSettingsService } from '../api/ThemeSettingsService';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
 
 @Component({
     selector: 'app-sidebar',
@@ -68,17 +69,62 @@ export class SidebarComponent implements OnInit {
     faChevronLeft = faChevronLeft;
     faChevronRight = faChevronRight;
 
-    sidebarBgColor = '#4e73df'; // Default color
-    settings: ThemeSettings[] = [];
+    public sidebarBgColor: string = ''; // Default color
+    public sidebarFontColor: string = ''; // Default color
+    public appTitle: string = ''; // Default title
 
-    constructor(private apiService: ApiService) {}
+    constructor(
+        private themeSettingsService: ThemeSettingsService,
+        private ngxLoader: NgxUiLoaderService
+    ) {
+        this.themeSettingsService.sidebarBgColor.subscribe(sidebarBgColor => this.sidebarBgColor = sidebarBgColor);
+    }
+
 
     ngOnInit(): void {
-        this.apiService.getThemeSettings().subscribe((data: any)=>{
-            this.sidebarBgColor = data.filter((setting: any) => setting.name == 'sidebar_bg_color')[0].value;
-        }) 
-        console.log("sidebarBgColor")
-        console.log(this.sidebarBgColor)
+        this.ngxLoader.start();
+
+        /**
+         * Fetching sidebarBgColor and subscribing to changes
+         */
+         this.themeSettingsService.findByName('sidebar_bg_color')
+         .subscribe(
+             data => {
+                this.sidebarBgColor = data[0].value!;
+                this.ngxLoader.stop();
+             },
+             error => {
+                 console.log(error);
+         });
+         this.themeSettingsService.sidebarBgColor.subscribe(sidebarBgColor => this.sidebarBgColor = sidebarBgColor);
+
+        /**
+         * Fetching sidebarFontColor and subscribing to changes
+         */
+        this.themeSettingsService.findByName('sidebar_font_color')
+        .subscribe(
+            data => {
+                this.sidebarFontColor = data[0].value!;
+                this.ngxLoader.stop();
+            },
+            error => {
+                console.log(error);
+        });
+        this.themeSettingsService.sidebarFontColor.subscribe(sidebarFontColor => this.sidebarFontColor = sidebarFontColor);
+
+        /**
+         * Fetching appTitle and subscribing to changes
+         */
+        this.themeSettingsService.findByName('app_title')
+        .subscribe(
+            data => {
+                this.appTitle = data[0].value!;
+                this.ngxLoader.stop();
+            },
+            error => {
+                console.log(error);
+        });
+        this.themeSettingsService.appTitle.subscribe(appTitle => this.appTitle = appTitle);
     }
 
 }

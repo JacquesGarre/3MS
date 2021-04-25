@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ThemeSettings } from '../../../Models/ThemeSettings';
-import { ApiService } from '../../../api/api.service';
+import { ThemeSettingsService } from '../../../api/ThemeSettingsService';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
+
 
 @Component({
     selector: 'app-colors-form',
@@ -9,21 +11,56 @@ import { ApiService } from '../../../api/api.service';
 })
 export class ColorsFormComponent implements OnInit {
 
-    sidebarBgColor = '#4e73df'; // Default color
-    settings: ThemeSettings[] = [];
+    public sidebarBgColor: string  = '';
+    public sidebarFontColor: string  = '';
 
-    constructor(private apiService: ApiService) {
+    public settings: ThemeSettings[] = [];
+
+    constructor(
+        private themeSettingsService: ThemeSettingsService,
+        private ngxLoader: NgxUiLoaderService
+    ) {
 
     }
 
+    sidebarBgColorOnChange(): void {
+        this.themeSettingsService.changeSidebarBgColor(this.sidebarBgColor);
+    }
+
+    sidebarFontColorOnChange(): void {
+        this.themeSettingsService.changeSidebarFontColor(this.sidebarFontColor);
+    }
+
     ngOnInit(): void {
+        this.ngxLoader.start();
+        /**
+         * Fetching sidebarBgColor and subscribing to changes
+         */
+        this.themeSettingsService.findByName('sidebar_bg_color')
+        .subscribe(
+            data => {
+                this.sidebarBgColor = data[0].value!;
+                this.ngxLoader.stop();
+            },
+            error => {
+                console.log(error);
+        });
+        this.themeSettingsService.sidebarBgColor.subscribe(sidebarBgColor => this.sidebarBgColor = sidebarBgColor);
+        
+        /**
+         * Fetching sidebarFontColor and subscribing to changes
+         */
+        this.themeSettingsService.findByName('sidebar_font_color')
+        .subscribe(
+            data => {
+                this.sidebarFontColor = data[0].value!;
+                this.ngxLoader.stop();
+            },
+            error => {
+                console.log(error);
+        });
+        this.themeSettingsService.sidebarFontColor.subscribe(sidebarFontColor => this.sidebarFontColor = sidebarFontColor);
 
-        this.apiService.getThemeSettings().subscribe((data: any)=>{
-            this.sidebarBgColor = data.filter((setting: any) => setting.name == 'sidebar_bg_color')[0].value;
-        }) 
-
-        console.log("sidebarBgColor")
-        console.log(this.sidebarBgColor)
     }
 
 }

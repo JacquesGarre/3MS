@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import {
     faTachometerAlt,
     faLaughWink,
@@ -62,6 +62,8 @@ export class PageContentComponent implements OnInit {
     faEllipsisV = faEllipsisV;
     faCircle = faCircle;
     faAngleUp = faAngleUp;
+
+    @Input() sidebarBgColor: any;
 
     constructor() { }
 

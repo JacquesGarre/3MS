@@ -1,5 +1,5 @@
-export interface ThemeSettings {
-    id: number;
-    name: string;
-    value: string;
-}
+export class ThemeSettings {
+    id?: any;
+    name?: string;
+    value?: string;
+  }
