@@ -24,7 +24,6 @@ export class SettingsPageComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.ngxLoader.start();
         /**
          * Fetching appTitle and subscribing to changes
          */
@@ -32,7 +31,6 @@ export class SettingsPageComponent implements OnInit {
         .subscribe(
             data => {
                 this.appTitle = data[0].value!;
-                this.ngxLoader.stop();
             },
             error => {
                 console.log(error);

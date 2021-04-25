@@ -22,6 +22,8 @@ import { NgxUiLoaderModule,
     SPINNER,
     POSITION,
     PB_DIRECTION } from "ngx-ui-loader";
+import { ModuleComponent } from './module/module.component';
+import { ModuleAddModalComponent } from './module-add-modal/module-add-modal.component';
 
 const ngxUiLoaderConfig: NgxUiLoaderConfig = {
     "bgsColor": "red",
@@ -61,7 +63,9 @@ const ngxUiLoaderConfig: NgxUiLoaderConfig = {
     SettingsPageComponent,
     ModulesPageComponent,
     HomePageComponent,
-    ColorsFormComponent
+    ColorsFormComponent,
+    ModuleComponent,
+    ModuleAddModalComponent
   ],
   imports: [
     BrowserModule,

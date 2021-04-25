@@ -10313,9 +10313,23 @@
   }
   
   .sidebar .nav-item .nav-link span {
-    font-size: 0.65rem;
-    display: block;
+        font-size: 0.65rem;
+        display: block;
   }
+
+    .sidebar .nav-item .nav-link fa-icon.arrowRight {
+        position: absolute;
+        right: 50px;
+        transition: right .2s, opacity .2s;
+        opacity:0;
+    }
+
+    .sidebar .nav-item .nav-link.active fa-icon.arrowRight {
+        position: absolute;
+        right: 16px;
+        opacity:1;
+    }
+
   
   .sidebar .nav-item.active .nav-link {
     font-weight: 700;

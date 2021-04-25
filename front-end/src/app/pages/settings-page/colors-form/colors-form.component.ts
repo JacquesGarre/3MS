@@ -32,7 +32,6 @@ export class ColorsFormComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.ngxLoader.start();
         /**
          * Fetching sidebarBgColor and subscribing to changes
          */
@@ -40,7 +39,6 @@ export class ColorsFormComponent implements OnInit {
         .subscribe(
             data => {
                 this.sidebarBgColor = data[0].value!;
-                this.ngxLoader.stop();
             },
             error => {
                 console.log(error);
@@ -54,7 +52,6 @@ export class ColorsFormComponent implements OnInit {
         .subscribe(
             data => {
                 this.sidebarFontColor = data[0].value!;
-                this.ngxLoader.stop();
             },
             error => {
                 console.log(error);

@@ -2,7 +2,7 @@
 <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar" [style.backgroundColor]="sidebarBgColor">
 
     <!-- Sidebar - Brand -->
-    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+    <a class="sidebar-brand d-flex align-items-center justify-content-center" routerLink="/" routerLinkActive="active" >
         <div class="sidebar-brand-icon rotate-n-15">
             <fa-icon [icon]="faLaughWink"></fa-icon>
         </div>
@@ -15,7 +15,7 @@
     <!-- Nav Item - Dashboard -->
     <li class="nav-item">
         <a class="nav-link" routerLink="/" routerLinkActive="active" [style.color]="sidebarFontColor">
-            <fa-icon [icon]="faTachometerAlt" class="mr-2"></fa-icon>
+            <fa-icon [icon]="faTachometerAlt" class="mr-2" [style.color]="sidebarFontColor"></fa-icon>
             <span>Home</span>
         </a>
     </li>
@@ -31,17 +31,17 @@
     <!-- Nav Item - Settings -->
     <li class="nav-item">
         <a class="nav-link" routerLink="/settings-page" routerLinkActive="active" [style.color]="sidebarFontColor">
-            <fa-icon [icon]="faCog" class="mr-2"></fa-icon>
+            <fa-icon [icon]="faCog" class="mr-2" [style.color]="sidebarFontColor"></fa-icon>
             <span>Settings</span>
-            <fa-icon [icon]="faChevronRight" class="float-right mt-1"></fa-icon>
+            <fa-icon [icon]="faChevronRight" class="float-right mt-1 arrowRight" [style.color]="sidebarFontColor"></fa-icon>
         </a>
     </li>
 
     <li class="nav-item">
         <a class="nav-link" routerLink="/modules-page" routerLinkActive="active"  [style.color]="sidebarFontColor">
-            <fa-icon [icon]="faWrench" class="mr-2"></fa-icon>
+            <fa-icon [icon]="faWrench" class="mr-2" [style.color]="sidebarFontColor"></fa-icon>
             <span>Modules</span>
-            <fa-icon [icon]="faChevronRight" class="float-right mt-1"></fa-icon>
+            <fa-icon [icon]="faChevronRight" class="float-right mt-1 arrowRight" [style.color]="sidebarFontColor"></fa-icon>
         </a>
     </li>
 
@@ -69,9 +69,18 @@
     <hr class="sidebar-divider mt-2">
 
     <!-- Heading -->
-    <div class="sidebar-heading">
+    <div class="sidebar-heading" *ngIf="modules.length > 0">
         Modules
     </div>
+
+    <li class="nav-item" *ngFor="let module of modules">
+        <a *ngIf="module.active" class="nav-link" routerLink="/module/{{module.slug}}" routerLinkActive="active"  [style.color]="sidebarFontColor">
+            <fa-icon [icon]="faWrench" class="mr-2" [style.color]="sidebarFontColor"></fa-icon>
+            <span>{{module.name}}</span>
+            <fa-icon [icon]="faChevronRight" class="float-right mt-1 arrowRight" [style.color]="sidebarFontColor"></fa-icon>
+        </a>
+    </li>
+
 
     <!-- Nav Item - Pages Collapse Menu -->
     <!-- <li class="nav-item">

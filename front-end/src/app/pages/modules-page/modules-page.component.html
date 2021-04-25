@@ -1,1 +1,29 @@
-<p>modules-page works!</p>
+<!-- Content Row -->
+<div class="row">
+
+    <!-- Loader -->
+    <ngx-ui-loader></ngx-ui-loader>
+    <!-- End of Loader -->
+
+    <!-- Content Column -->
+    <div class="col-lg-2 mb-4">
+        <!-- Module Card Example -->
+        <div class="card shadow mb-4" *ngFor="let module of modules">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary float-left module-name">{{module.name}}</h6>
+                <h6 class="m-0 font-weight-bold float-right btn btn-sm btn-outline-danger" *ngIf="module.active" (click)="toggleModule(module)">
+                    Disable
+                </h6>
+                <h6 class="m-0 font-weight-bold float-right btn btn-sm btn-outline-success" *ngIf="!module.active" (click)="toggleModule(module)">
+                    Enable
+                </h6>
+            </div>
+            <div class="card-body">
+                <h4 class="small">/modules/{{module.slug}}</h4>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+

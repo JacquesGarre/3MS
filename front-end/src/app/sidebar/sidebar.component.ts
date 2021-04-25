@@ -29,8 +29,9 @@ import {
     faChevronLeft,
     faChevronRight
 } from '@fortawesome/free-solid-svg-icons';
-import { ThemeSettings } from '../Models/ThemeSettings';
+import { Modules } from '../Models/Modules';
 import { ThemeSettingsService } from '../api/ThemeSettingsService';
+import { ModulesService } from '../api/ModulesService';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 
 @Component({
@@ -72,9 +73,11 @@ export class SidebarComponent implements OnInit {
     public sidebarBgColor: string = ''; // Default color
     public sidebarFontColor: string = ''; // Default color
     public appTitle: string = ''; // Default title
+    public modules: Modules[] = []; // modules
 
     constructor(
         private themeSettingsService: ThemeSettingsService,
+        private modulesService: ModulesService,
         private ngxLoader: NgxUiLoaderService
     ) {
         this.themeSettingsService.sidebarBgColor.subscribe(sidebarBgColor => this.sidebarBgColor = sidebarBgColor);
@@ -82,7 +85,6 @@ export class SidebarComponent implements OnInit {
 
 
     ngOnInit(): void {
-        this.ngxLoader.start();
 
         /**
          * Fetching sidebarBgColor and subscribing to changes
@@ -91,7 +93,7 @@ export class SidebarComponent implements OnInit {
          .subscribe(
              data => {
                 this.sidebarBgColor = data[0].value!;
-                this.ngxLoader.stop();
+
              },
              error => {
                  console.log(error);
@@ -105,7 +107,7 @@ export class SidebarComponent implements OnInit {
         .subscribe(
             data => {
                 this.sidebarFontColor = data[0].value!;
-                this.ngxLoader.stop();
+
             },
             error => {
                 console.log(error);
@@ -119,12 +121,25 @@ export class SidebarComponent implements OnInit {
         .subscribe(
             data => {
                 this.appTitle = data[0].value!;
-                this.ngxLoader.stop();
+
             },
             error => {
                 console.log(error);
         });
         this.themeSettingsService.appTitle.subscribe(appTitle => this.appTitle = appTitle);
+
+        /**
+         * Fetching modules and subscribing to changes
+         */
+        this.modulesService.getAll()
+        .subscribe(
+            data => {
+                this.modules = data;
+            },
+            error => {
+                console.log(error);
+        });
+        this.modulesService.modules.subscribe(modules => this.modules = modules);
     }
 
 }
