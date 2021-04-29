@@ -7,7 +7,7 @@
     
 
     <!-- Content Column -->
-    <div class="col-lg-3 mb-4">
+    <div class="col-lg-12 mb-4">
 
         <h2 *ngIf="modules.length == 0" class="mb-4">Start by creating your own module!</h2>
         <app-module-add-modal></app-module-add-modal>
@@ -17,7 +17,14 @@
         <!-- Module Card Example -->
         <div class="card shadow mb-4" *ngFor="let module of modules">
             <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary float-left module-name">{{module.name}}</h6>
+                <h6 class="m-0 font-weight-bold text-primary float-left module-name">
+                    <fa-icon [icon]="['fas', module.icon!]" class="mr-2"></fa-icon>
+                    {{module.name}} 
+                    <span class="h6 ml-5 mr-5">/modules/{{module.slug}}</span>                
+                </h6>
+                <h6 class="m-0 font-weight-bold float-right btn btn-sm btn-outline-danger ml-2" (click)="deleteModule(module)">
+                    <fa-icon [icon]="faTrashAlt"></fa-icon>
+                </h6>
                 <h6 class="m-0 font-weight-bold float-right btn btn-sm btn-outline-danger" *ngIf="module.active" (click)="toggleModule(module)">
                     Disable
                 </h6>
@@ -26,7 +33,7 @@
                 </h6>
             </div>
             <div class="card-body">
-                <h4 class="small">/modules/{{module.slug}}</h4>
+                Formulaire inside avec un dropdown
             </div>
         </div>
     </div>

@@ -75,7 +75,7 @@
 
     <li class="nav-item" *ngFor="let module of modules">
         <a *ngIf="module.active" class="nav-link" routerLink="/module/{{module.slug}}" routerLinkActive="active"  [style.color]="sidebarFontColor">
-            <fa-icon [icon]="faWrench" class="mr-2" [style.color]="sidebarFontColor"></fa-icon>
+            <fa-icon [icon]="['fas', module.icon!]" class="mr-2" [style.color]="sidebarFontColor"></fa-icon>
             <span>{{module.name}}</span>
             <fa-icon [icon]="faChevronRight" class="float-right mt-1 arrowRight" [style.color]="sidebarFontColor"></fa-icon>
         </a>

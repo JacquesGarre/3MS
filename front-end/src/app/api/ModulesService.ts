@@ -35,14 +35,23 @@ export class ModulesService {
     }
 
     addModule(modules: Modules[], module: Modules) {
-        this.create(module).subscribe(
-            module => {
-                modules.push(module);
-                this.modulesSource.next(modules);
+        this.getAll()
+        .subscribe(
+            data => {
+                modules = data;
+                this.create(module).subscribe(
+                    module => {
+                        modules.push(module);
+                        this.modulesSource.next(modules);
+                    },
+                    error => {
+                        console.log(error);
+                });
             },
             error => {
                 console.log(error);
         });
+
     }
 
     create(data: Modules): Observable<any> {
@@ -59,7 +68,12 @@ export class ModulesService {
         return this.http.put(`${baseUrl}/${id}`, data);
     }
 
-    delete(id: any): Observable<any> {
+    delete(modules: Modules[], id: any): Observable<any> {
+        modules = modules.filter((module) => {
+            return module.id !== id
+        });
+        console.log(modules);
+        this.modulesSource.next(modules);
         return this.http.delete(`${baseUrl}/${id}`);
     }
 

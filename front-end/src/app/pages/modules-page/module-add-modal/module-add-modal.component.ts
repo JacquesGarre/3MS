@@ -3,6 +3,7 @@ import { Modules } from '../../../Models/Modules';
 import { ModulesService } from '../../../api/ModulesService';
 import { Router } from '@angular/router';
 import { ModuleComponent } from '../../../module/module.component';
+import { IconName } from "@fortawesome/fontawesome-common-types";
 
 import {
     NgbModal,
@@ -21,6 +22,7 @@ export class ModuleAddModalComponent implements OnInit {
     closeResult = '';
     name: string = '';
     slug: string = '';
+    icon:IconName = "star";
 
     constructor(
         public router:Router,
@@ -40,6 +42,8 @@ export class ModuleAddModalComponent implements OnInit {
     }
 
     open(content: any) {
+        this.name = '';
+        this.slug = '';
         this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title', centered: true }).result.then((result) => {
             this.closeResult = `Closed with: ${result}`;
         }, (reason) => {
@@ -48,13 +52,16 @@ export class ModuleAddModalComponent implements OnInit {
     }
 
     addModule(modal: any){
+        this.getModules();
         let newModule = new Modules();
         newModule.slug = this.slug;
         newModule.name = this.name;
         newModule.active = true;
         newModule.limitPerPage = 50;
         newModule.menuOrder = 5;
-        newModule.icon = "faWrench";
+        newModule.icon = this.icon;
+        console.log('newModule');
+        console.log(newModule)
         this.modulesService.addModule(this.modules, newModule);
         this.router.config.push({
             path: 'module/' + newModule.slug,
