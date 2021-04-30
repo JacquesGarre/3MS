@@ -19,6 +19,7 @@ use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\KernelInterface;
 
+define('STDIN',fopen("php://stdin","r"));
 final class ModuleSubscriber implements EventSubscriberInterface
 {
     private $em;
@@ -79,9 +80,19 @@ final class ModuleSubscriber implements EventSubscriberInterface
             '--api-resource' => 'a',
         ]);
 
+        // You can use NullOutput() if you don't need the output
         $output = new NullOutput();
         $application->run($input, $output);
 
-        return new Response("");
+        // return the output, don't use if you used NullOutput()
+        //$content = $output->fetch();
+
+        $setting = new ThemeSettings();
+        $setting->setName('REPONSE DU MAKE ENTITE:');
+        $setting->setValue('YO');
+        $this->em->persist($setting);
+        $this->em->flush();
+
+        return new Response(""); // if you used NullOutput()
     }
 }
