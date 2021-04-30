@@ -56,7 +56,7 @@ final class ModuleSubscriber implements EventSubscriberInterface
         // If a module is updated
         } else if ($module instanceof Modules && Request::METHOD_PUT == $method) {
             
-            // php bin/console make:entity
+            
 
         // If a module is deleted
         } else if ($entity == 'App\Entity\Modules' && Request::METHOD_DELETE == $method) {
@@ -80,19 +80,9 @@ final class ModuleSubscriber implements EventSubscriberInterface
             '--api-resource' => 'a',
         ]);
 
-        // You can use NullOutput() if you don't need the output
         $output = new NullOutput();
         $application->run($input, $output);
+        return new Response(""); 
 
-        // return the output, don't use if you used NullOutput()
-        //$content = $output->fetch();
-
-        $setting = new ThemeSettings();
-        $setting->setName('REPONSE DU MAKE ENTITE:');
-        $setting->setValue('YO');
-        $this->em->persist($setting);
-        $this->em->flush();
-
-        return new Response(""); // if you used NullOutput()
     }
 }
