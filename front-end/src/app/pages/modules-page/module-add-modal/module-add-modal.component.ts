@@ -30,7 +30,16 @@ export class ModuleAddModalComponent implements OnInit {
         private modalService: NgbModal
     ) { }
 
-
+    open(content: any) {
+        this.name = '';
+        this.slug = '';
+        this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title', centered: true }).result.then((result) => {
+            this.closeResult = `Closed with: ${result}`;
+        }, (reason) => {
+            this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+        });
+    }
+    
     ngOnInit(): void {   
         this.getModules();     
     }
@@ -41,15 +50,6 @@ export class ModuleAddModalComponent implements OnInit {
         });
     }
 
-    open(content: any) {
-        this.name = '';
-        this.slug = '';
-        this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title', centered: true }).result.then((result) => {
-            this.closeResult = `Closed with: ${result}`;
-        }, (reason) => {
-            this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-        });
-    }
 
     addModule(modal: any){
         this.getModules();

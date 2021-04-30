@@ -1,7 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { Modules } from '../../Models/Modules';
 import { ModulesService } from '../../api/ModulesService';
-import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import { faTrashAlt, faPencilAlt } from '@fortawesome/free-solid-svg-icons';
+import { IconName } from "@fortawesome/fontawesome-common-types";
+import {
+    NgbModal,
+    ModalDismissReasons
+} from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-modules-page',
   templateUrl: './modules-page.component.html',
@@ -9,12 +14,17 @@ import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 })
 export class ModulesPageComponent implements OnInit {
 
+    
+    closeResult = '';
     faTrashAlt = faTrashAlt;
+    faPencilAlt = faPencilAlt;
+    module: Modules = {};
 
     public modules: Modules[] = []; // modules
 
     constructor(
-        private modulesService: ModulesService
+        private modulesService: ModulesService,
+        private modalService: NgbModal
     ) { 
         this.modulesService.modules.subscribe(modules => this.modules = modules);
     }
@@ -40,6 +50,28 @@ export class ModulesPageComponent implements OnInit {
         });
     }
 
+
+
+    editModule(content:any, module: Modules) {
+        this.module = module;
+        this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title', centered: true }).result.then((result) => {
+            this.closeResult = `Closed with: ${result}`;
+        }, (reason) => {
+            this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+        });
+    }
+
+    updateModule(modal: any, module: Modules) {
+        this.modulesService.update(this.modules, module.id, module).subscribe(
+            response => {
+                console.log(response);
+            },
+            error => {
+                console.log(error);
+        });
+        modal.close();
+    }
+
     ngOnInit(): void {
 
         /**
@@ -55,6 +87,16 @@ export class ModulesPageComponent implements OnInit {
         });
         this.modulesService.modules.subscribe(modules => this.modules = modules);
         
+    }
+
+    private getDismissReason(reason: any): string {
+        if (reason === ModalDismissReasons.ESC) {
+            return 'by pressing ESC';
+        } else if (reason === ModalDismissReasons.BACKDROP_CLICK) {
+            return 'by clicking on a backdrop';
+        } else {
+            return `with: ${reason}`;
+        }
     }
 
 }

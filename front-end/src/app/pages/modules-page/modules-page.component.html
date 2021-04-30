@@ -12,7 +12,40 @@
         <h2 *ngIf="modules.length == 0" class="mb-4">Start by creating your own module!</h2>
         <app-module-add-modal></app-module-add-modal>
 
-        
+        <ng-template #content let-modal>
+            <div class="modal-header">
+                <h5 class="modal-title" id="modal-basic-title">Edit module {{module.name}}</h5>
+                <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="name">Title</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="module.name" [(ngModel)]="module.name">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="slug">Slug</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="module.slug" [(ngModel)]="module.slug">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="icon">Icon</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="module.icon" [(ngModel)]="module.icon">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-danger" (click)="modal.close('Cancel')">Cancel</button>
+                <button type="button" class="btn btn-outline-success" (click)="updateModule(modal, module)">Save</button>
+            </div>
+        </ng-template>
 
         <!-- Module Card Example -->
         <div class="card shadow mb-4" *ngFor="let module of modules">
@@ -25,17 +58,39 @@
                 <h6 class="m-0 font-weight-bold float-right btn btn-sm btn-outline-danger ml-2" (click)="deleteModule(module)">
                     <fa-icon [icon]="faTrashAlt"></fa-icon>
                 </h6>
-                <h6 class="m-0 font-weight-bold float-right btn btn-sm btn-outline-danger" *ngIf="module.active" (click)="toggleModule(module)">
+                <h6 class="m-0 font-weight-bold float-right btn btn-sm btn-outline-success ml-2" (click)="editModule(content, module)">
+                    <fa-icon [icon]="faPencilAlt"></fa-icon>
+                </h6>
+                <button class="m-0 font-weight-bold  btn btn-sm btn-outline-danger" *ngIf="module.active" (click)="toggleModule(module)">
                     Disable
-                </h6>
-                <h6 class="m-0 font-weight-bold float-right btn btn-sm btn-outline-success" *ngIf="!module.active" (click)="toggleModule(module)">
+                </button>
+                <button class="m-0 font-weight-bold  btn btn-sm btn-outline-success" *ngIf="!module.active" (click)="toggleModule(module)">
                     Enable
-                </h6>
+                </button>
             </div>
             <div class="card-body">
                 Formulaire inside avec un dropdown
             </div>
         </div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     </div>
 
 </div>
