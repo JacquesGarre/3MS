@@ -5,7 +5,9 @@ import { map } from 'rxjs/operators';
 import { Modules } from '../Models/Modules';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 
-const baseUrl = 'http://localhost:8000/api/modules';
+const apiUrl = 'http://localhost:8000/api';
+const baseUrl = apiUrl+'/modules';
+
 
 @Injectable({
   providedIn: 'root'
@@ -15,12 +17,16 @@ export class ModulesService {
 
     private modulesArray: Modules[] = [];
     private modulesSource = new BehaviorSubject(this.modulesArray);
-    modules = this.modulesSource.asObservable();    
-
+    modules = this.modulesSource.asObservable();  
+    
     constructor(
         private http: HttpClient,
         private ngxLoader: NgxUiLoaderService
     ) {}
+
+    getExistingEntities(): Observable<any> {
+        return this.http.get<any>(apiUrl);
+    }
 
     getAll(): Observable<Modules[]> {
         return this.http.get<Modules[]>(baseUrl);
@@ -51,7 +57,6 @@ export class ModulesService {
             error => {
                 console.log(error);
         });
-
     }
 
     create(data: Modules): Observable<any> {

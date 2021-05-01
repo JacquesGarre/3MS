@@ -12,6 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ApiResource()
  * @ApiFilter(SearchFilter::class, properties={"active": "exact"})
  * @ORM\Entity(repositoryClass=ModulesRepository::class)
+ * @ORM\HasLifecycleCallbacks()
  */
 class Modules
 {

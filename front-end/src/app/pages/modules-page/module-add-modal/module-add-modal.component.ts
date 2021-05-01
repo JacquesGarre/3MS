@@ -24,6 +24,8 @@ export class ModuleAddModalComponent implements OnInit {
     slug: string = '';
     icon:IconName = "star";
 
+    errors: any[] = [];
+
     constructor(
         public router:Router,
         private modulesService: ModulesService,
@@ -52,6 +54,7 @@ export class ModuleAddModalComponent implements OnInit {
 
 
     addModule(modal: any){
+        this.errors = [];
         this.getModules();
         let newModule = new Modules();
         newModule.slug = this.slug;
@@ -61,14 +64,36 @@ export class ModuleAddModalComponent implements OnInit {
         newModule.menuOrder = 5;
         newModule.icon = this.icon;
         console.log('newModule');
-        console.log(newModule)
-        this.modulesService.addModule(this.modules, newModule);
-        this.router.config.push({
-            path: 'module/' + newModule.slug,
-            component: ModuleComponent,
-            data: newModule
-        });
-        modal.close();
+        console.log(newModule);
+
+        this.modulesService.getExistingEntities().subscribe(
+            entities => {
+
+                // Testing if entity doesn't exist already
+                entities.resourceNameCollection.map((route: any) => {
+                    let existingEntity = route.replace("App\\Entity\\", "").toLowerCase();
+                    if (existingEntity == newModule.slug!.toLowerCase()) {
+                        this.errors.push('ENTITE ' + existingEntity + ' existe deja, cannot create! ');
+                    }
+                })
+
+                if(this.errors.length == 0) {
+                    this.modulesService.addModule(this.modules, newModule);
+                    this.router.config.push({
+                        path: 'module/' + newModule.slug,
+                        component: ModuleComponent,
+                        data: newModule
+                    });
+                    modal.close();
+                } else {
+                    alert(this.errors);
+                }
+            },
+            error => {
+                console.log(error);
+            }
+        );
+
     }
 
     private getDismissReason(reason: any): string {
