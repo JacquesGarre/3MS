@@ -47,7 +47,16 @@ class ModulesSubscriber implements EventSubscriber
 
     private function getEntityName($slug): string
     {
-        return ucfirst(strtolower($slug));
+        $entityName = '';
+        if (strpos($slug, '-') === FALSE) {
+            $entityName = ucfirst(strtolower($slug));
+        } else {
+            $words = explode('-', $slug);
+            foreach ($words as $word) {
+                $entityName .= ucfirst(strtolower($word));
+            }
+        }
+        return $entityName;
     }
 
     // After adding a module
@@ -73,7 +82,7 @@ class ModulesSubscriber implements EventSubscriber
             unlink($srcDir.'/Repository/'.$entity.'Repository.php');
 
             // Create new entity
-            $entityName = ucfirst(strtolower($module->getSlug()));
+            $entityName = $this->getEntityName($module->getSlug());
             $this->makeEntity($entityName);
         }
 

@@ -27,7 +27,8 @@ import {
     faCircle,
     faAngleUp,
     faChevronLeft,
-    faChevronRight
+    faChevronRight,
+    IconName
 } from '@fortawesome/free-solid-svg-icons';
 import { Modules } from '../Models/Modules';
 import { ThemeSettingsService } from '../api/ThemeSettingsService';
@@ -73,6 +74,7 @@ export class SidebarComponent implements OnInit {
     public sidebarBgColor: string = ''; // Default color
     public sidebarFontColor: string = ''; // Default color
     public appTitle: string = ''; // Default title
+    public appIcon: IconName = '' as IconName; // Default icon
     public modules: Modules[] = []; // modules
 
     constructor(
@@ -86,60 +88,52 @@ export class SidebarComponent implements OnInit {
 
     ngOnInit(): void {
 
-        /**
-         * Fetching sidebarBgColor and subscribing to changes
-         */
-         this.themeSettingsService.findByName('sidebar_bg_color')
-         .subscribe(
-             data => {
-                this.sidebarBgColor = data[0].value!;
+        this.ngxLoader.start();
 
-             },
-             error => {
-                 console.log(error);
-         });
-         this.themeSettingsService.sidebarBgColor.subscribe(sidebarBgColor => this.sidebarBgColor = sidebarBgColor);
-
-        /**
-         * Fetching sidebarFontColor and subscribing to changes
-         */
-        this.themeSettingsService.findByName('sidebar_font_color')
+        // Fetching settings
+        this.themeSettingsService.getAll()
         .subscribe(
-            data => {
-                this.sidebarFontColor = data[0].value!;
-
+            settings => {
+                settings.map((setting) => {
+                    switch(setting.name){
+                        case 'sidebar_bg_color':
+                            this.sidebarBgColor = setting.value!;
+                        break;
+                        case 'sidebar_font_color':
+                            this.sidebarFontColor = setting.value!;
+                        break;
+                        case 'app_title':
+                            this.appTitle = setting.value!;
+                        break;
+                        case 'app_icon':
+                            let iconName: IconName = setting.value! as IconName;
+                            this.appIcon = iconName;
+                        break;
+                    }
+                });
+                // Fecthing modules
+                this.modulesService.getAll()
+                .subscribe(
+                    data => {
+                        this.modules = data;
+                        this.ngxLoader.stop();
+                    },
+                    error => {
+                        console.log(error);
+                });
             },
             error => {
                 console.log(error);
         });
+
+        this.themeSettingsService.sidebarBgColor.subscribe(sidebarBgColor => this.sidebarBgColor = sidebarBgColor);
         this.themeSettingsService.sidebarFontColor.subscribe(sidebarFontColor => this.sidebarFontColor = sidebarFontColor);
-
-        /**
-         * Fetching appTitle and subscribing to changes
-         */
-        this.themeSettingsService.findByName('app_title')
-        .subscribe(
-            data => {
-                this.appTitle = data[0].value!;
-
-            },
-            error => {
-                console.log(error);
-        });
         this.themeSettingsService.appTitle.subscribe(appTitle => this.appTitle = appTitle);
-
-        /**
-         * Fetching modules and subscribing to changes
-         */
-        this.modulesService.getAll()
-        .subscribe(
-            data => {
-                this.modules = data;
-            },
-            error => {
-                console.log(error);
-        });
+        this.themeSettingsService.appIcon.subscribe(appIcon => this.appIcon = appIcon as IconName);
         this.modulesService.modules.subscribe(modules => this.modules = modules);
+
     }
+
+
 
 }

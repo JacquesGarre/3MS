@@ -34,6 +34,13 @@ export class ThemeSettingsService {
     private appTitleSource = new BehaviorSubject('3MS'); // Default app title
     appTitle = this.appTitleSource.asObservable();    
 
+    private appIconSetting: ThemeSettings = {
+        name: 'app_icon',
+        value: 'laugh-wink'
+    }
+    private appIconSource = new BehaviorSubject('laugh-wink'); // Default app Icon
+    appIcon = this.appIconSource.asObservable();    
+
     constructor(
         private http: HttpClient,
         private ngxLoader: NgxUiLoaderService
@@ -86,6 +93,26 @@ export class ThemeSettingsService {
                 this.appTitleSetting = data[0];
                 this.appTitleSetting.value = appTitle;
                 this.update(this.appTitleSetting.id, this.appTitleSetting)
+                .subscribe(
+                    response => {
+                        console.log(response);
+                    },
+                    error => {
+                        console.log(error);
+                });
+            },
+            error => {
+                console.log(error);
+        });
+    }
+
+    changeAppIcon(appIcon: string) {
+        this.appIconSource.next(appIcon);
+        this.findByName('app_icon').subscribe(
+            data => {
+                this.appIconSetting = data[0];
+                this.appIconSetting.value = appIcon;
+                this.update(this.appIconSetting.id, this.appIconSetting)
                 .subscribe(
                     response => {
                         console.log(response);

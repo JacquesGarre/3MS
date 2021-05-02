@@ -2,7 +2,7 @@
 <div class="row">
 
     <!-- Loader -->
-    <ngx-ui-loader></ngx-ui-loader>
+    <ngx-ui-loader [loaderId]="'page-loader'"></ngx-ui-loader>
     <!-- End of Loader -->
 
     <!-- Content Column -->
@@ -14,8 +14,16 @@
                 <h6 class="m-0 font-weight-bold text-primary">Application</h6>
             </div>
             <div class="card-body">
-                <h4 class="small font-weight-bold">Title</h4>
-                <input class="form-control" type="text" [(ngModel)]="appTitle" (change)="appTitleOnChange()">
+                <div class="form-group">
+                    <label for="name">Title</label> 
+                    <div class="input-group mb-2">
+                        <input class="form-control" type="text" [(ngModel)]="appTitle" (change)="appTitleOnChange()">
+                    </div>
+                    <label for="name">Icon</label> 
+                    <div class="input-group mb-2">
+                        <input class="form-control" type="text" [(ngModel)]="appIcon" (change)="appIconOnChange()">
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -33,7 +41,7 @@
             </div>
             <div class="card-body">
                 <!-- Color System -->
-                <app-colors-form></app-colors-form>
+                <app-colors-form [sidebarBgColor]="sidebarBgColor" [sidebarFontColor]="sidebarFontColor"></app-colors-form>
                 <!-- Color System -->
             </div>
         </div>

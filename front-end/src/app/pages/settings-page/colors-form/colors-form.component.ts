@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { ThemeSettings } from '../../../Models/ThemeSettings';
 import { ThemeSettingsService } from '../../../api/ThemeSettingsService';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
@@ -11,17 +11,13 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 })
 export class ColorsFormComponent implements OnInit {
 
-    public sidebarBgColor: string  = '';
-    public sidebarFontColor: string  = '';
-
-    public settings: ThemeSettings[] = [];
+    @Input() sidebarBgColor: string  = '';
+    @Input() sidebarFontColor: string  = '';
 
     constructor(
         private themeSettingsService: ThemeSettingsService,
         private ngxLoader: NgxUiLoaderService
-    ) {
-
-    }
+    ) {}
 
     sidebarBgColorOnChange(): void {
         this.themeSettingsService.changeSidebarBgColor(this.sidebarBgColor);
@@ -31,33 +27,6 @@ export class ColorsFormComponent implements OnInit {
         this.themeSettingsService.changeSidebarFontColor(this.sidebarFontColor);
     }
 
-    ngOnInit(): void {
-        /**
-         * Fetching sidebarBgColor and subscribing to changes
-         */
-        this.themeSettingsService.findByName('sidebar_bg_color')
-        .subscribe(
-            data => {
-                this.sidebarBgColor = data[0].value!;
-            },
-            error => {
-                console.log(error);
-        });
-        this.themeSettingsService.sidebarBgColor.subscribe(sidebarBgColor => this.sidebarBgColor = sidebarBgColor);
-        
-        /**
-         * Fetching sidebarFontColor and subscribing to changes
-         */
-        this.themeSettingsService.findByName('sidebar_font_color')
-        .subscribe(
-            data => {
-                this.sidebarFontColor = data[0].value!;
-            },
-            error => {
-                console.log(error);
-        });
-        this.themeSettingsService.sidebarFontColor.subscribe(sidebarFontColor => this.sidebarFontColor = sidebarFontColor);
-
-    }
+    ngOnInit(): void {}
 
 }

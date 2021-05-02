@@ -1,49 +1,123 @@
 <div class="row">
 
     <!-- Loader -->
-    <ngx-ui-loader></ngx-ui-loader>
+    <ngx-ui-loader [loaderId]="'page-loader'"></ngx-ui-loader>
     <!-- End of Loader -->
-
-    
 
     <!-- Content Column -->
     <div class="col-lg-12 mb-4">
 
-        <h2 *ngIf="modules.length == 0" class="mb-4">Start by creating your own module!</h2>
+        <h3 *ngIf="modules.length == 0" class="mb-4">Start by creating a new entity!</h3>
         <app-module-add-modal></app-module-add-modal>
 
         <ng-template #content let-modal>
+
+            <!-- Loader -->
+            <ngx-ui-loader [loaderId]="'addmodal-loader'"></ngx-ui-loader>
+            <!-- End of Loader -->
+
+            <form [formGroup]="editModuleForm" (ngSubmit)="updateModule(modal)">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modal-basic-title">Edit entity {{module.name}}</h5>
+                    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="name">Title</label>
+                        <div class="input-group">
+                            <input type="text"
+                                [className]="
+                            (editModuleForm.invalid && (editModuleForm.get('name')?.dirty || editModuleForm.get('name')?.touched) && editModuleForm.get('name')?.errors) ? 
+                            'form-control is-invalid' : (editModuleForm.invalid && (editModuleForm.get('name')?.dirty || editModuleForm.get('name')?.touched)) ? 'form-control is-valid' : 'form-control'"
+                                id="name" name="name" formControlName="name" moduleNameValidator autocomplete="off">
+                            <div *ngIf="editModuleForm.invalid && (editModuleForm.dirty || editModuleForm.touched)"
+                                class="invalid-feedback">
+                                <div *ngIf="editModuleForm.get('name')?.errors?.required">
+                                    Title is required.
+                                </div>
+                                <div *ngIf="editModuleForm.get('name')?.errors?.minlength">
+                                    Title must be at least 4 characters long.
+                                </div>
+                                <div *ngIf="editModuleForm.get('name')?.errors?.nameAlreadyUsed">
+                                    Title "{{editModuleForm.get('name')?.value}}" is already used by another module.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="name">Slug</label>
+                        <div class="input-group">
+                            <input type="text"
+                                [className]="
+                            (editModuleForm.invalid && (editModuleForm.get('slug')?.dirty || editModuleForm.get('slug')?.touched) && editModuleForm.get('slug')?.errors) ? 
+                            'form-control is-invalid' : (editModuleForm.invalid && (editModuleForm.get('slug')?.dirty || editModuleForm.get('slug')?.touched)) ? 'form-control is-valid' : 'form-control'"
+                                id="slug" name="slug" formControlName="slug" moduleSlugValidator autocomplete="off">
+                            <div *ngIf="editModuleForm.invalid && (editModuleForm.dirty || editModuleForm.touched)"
+                                class="invalid-feedback">
+                                <div *ngIf="editModuleForm.get('slug')?.errors?.required">
+                                    Slug is required.
+                                </div>
+                                <div *ngIf="editModuleForm.get('slug')?.errors?.minlength">
+                                    Slug must be at least 4 characters long.
+                                </div>
+                                <div *ngIf="editModuleForm.get('slug')?.errors?.slugInvalid">
+                                    Invalid format
+                                </div>
+                                <div *ngIf="editModuleForm.get('slug')?.errors?.slugAlreadyUsed">
+                                    Slug "{{editModuleForm.get('slug')?.value}}" is already used by another module.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="name">Icon</label>
+                        <div class="input-group">
+                            <input type="text"
+                                [className]="
+                            (editModuleForm.invalid && (editModuleForm.get('icon')?.dirty || editModuleForm.get('icon')?.touched) && editModuleForm.get('icon')?.errors) ? 
+                            'form-control is-invalid' : (editModuleForm.invalid && (editModuleForm.get('icon')?.dirty || editModuleForm.get('icon')?.touched)) ? 'form-control is-valid' : 'form-control'"
+                                id="icon" name="icon" formControlName="icon" moduleIconValidator autocomplete="off">
+                            <div *ngIf="editModuleForm.invalid && (editModuleForm.dirty || editModuleForm.touched)"
+                                class="invalid-feedback">
+                                <div *ngIf="editModuleForm.get('icon')?.errors?.required">
+                                    Icon is required.
+                                </div>
+                                <div *ngIf="editModuleForm.get('icon')?.errors?.iconInvalid">
+                                    Icon "fas-{{editModuleForm.get('icon')?.value}}" doesn't exist
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-danger" (click)="modal.close('Cancel')">Cancel</button>
+                    <button type="submit" class="btn btn-outline-success"
+                        [disabled]="!editModuleForm.valid">Save</button>
+                </div>
+            </form>
+        </ng-template>
+
+
+        <ng-template #deleteModal let-modal>
+
+            <!-- Loader -->
+            <ngx-ui-loader [loaderId]="'addmodal-loader'"></ngx-ui-loader>
+            <!-- End of Loader -->
+
             <div class="modal-header">
-                <h5 class="modal-title" id="modal-basic-title">Edit module {{module.name}}</h5>
+                <h5 class="modal-title" id="modal-basic-title">Delete entity {{module.name}}</h5>
                 <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <form>
-                    <div class="form-group">
-                        <label for="name">Title</label>
-                        <div class="input-group">
-                            <input type="text" class="form-control" name="module.name" [(ngModel)]="module.name">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="slug">Slug</label>
-                        <div class="input-group">
-                            <input type="text" class="form-control" name="module.slug" [(ngModel)]="module.slug">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="icon">Icon</label>
-                        <div class="input-group">
-                            <input type="text" class="form-control" name="module.icon" [(ngModel)]="module.icon">
-                        </div>
-                    </div>
-                </form>
+                Deleting entity <strong>{{module.name}}</strong> will also drop the <strong>{{module.slug}}</strong> table, are you sure?
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline-danger" (click)="modal.close('Cancel')">Cancel</button>
-                <button type="button" class="btn btn-outline-success" (click)="updateModule(modal, module)">Save</button>
+                <button type="submit" class="btn btn-outline-success" (click)="confirmDelete(modal, module)">Confirm</button>
             </div>
         </ng-template>
 
@@ -52,20 +126,24 @@
             <div class="card-header py-3">
                 <h6 class="m-0 font-weight-bold text-primary float-left module-name">
                     <fa-icon [icon]="['fas', module.icon!]" class="mr-2"></fa-icon>
-                    {{module.name}} 
-                    <span class="h6 ml-5 mr-5">/modules/{{module.slug}}</span>                
+                    {{module.name}}
+                    <span class="h6 ml-5 mr-5">/modules/{{module.slug}}</span>
                 </h6>
-                <h6 class="m-0 font-weight-bold float-right btn btn-sm btn-outline-danger ml-2" (click)="deleteModule(module)">
+                <h6 class="m-0 font-weight-bold float-right btn btn-sm btn-outline-danger ml-2"
+                    (click)="deleteModule(deleteModal, module)">
                     <fa-icon [icon]="faTrashAlt"></fa-icon>
                 </h6>
-                <h6 class="m-0 font-weight-bold float-right btn btn-sm btn-outline-success ml-2" (click)="editModule(content, module)">
+                <h6 class="m-0 font-weight-bold float-right btn btn-sm btn-outline-success ml-2"
+                    (click)="editModule(content, module)">
                     <fa-icon [icon]="faPencilAlt"></fa-icon>
                 </h6>
-                <button class="m-0 font-weight-bold  btn btn-sm btn-outline-danger" *ngIf="module.active" (click)="toggleModule(module)">
-                    Disable
+                <button class="m-0 font-weight-bold float-right btn btn-sm btn-outline-success" *ngIf="module.active"
+                    (click)="toggleModule(module)">
+                    <fa-icon [icon]="['fas', 'eye']"></fa-icon>
                 </button>
-                <button class="m-0 font-weight-bold  btn btn-sm btn-outline-success" *ngIf="!module.active" (click)="toggleModule(module)">
-                    Enable
+                <button class="m-0 font-weight-bold float-right btn btn-sm btn-outline-danger" *ngIf="!module.active"
+                    (click)="toggleModule(module)">
+                    <fa-icon [icon]="['fas', 'eye-slash']"></fa-icon>
                 </button>
             </div>
             <div class="card-body">
@@ -73,7 +151,7 @@
             </div>
         </div>
 
-        
+
 
 
 
@@ -94,5 +172,3 @@
     </div>
 
 </div>
-
-

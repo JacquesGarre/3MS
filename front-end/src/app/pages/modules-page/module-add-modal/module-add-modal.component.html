@@ -1,36 +1,105 @@
-<button class="btn btn-sm btn-outline-primary mb-4" (click)="open(content)">Create a new module</button>
+<button class="btn btn-sm btn-outline-primary mb-4" (click)="open(content)">New entity <fa-icon [icon]="['fas', 'plus']" class="ml-2"></fa-icon></button>
 
 <ng-template #content let-modal>
-    <div class="modal-header">
-        <h5 class="modal-title" id="modal-basic-title">New module</h5>
-        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-    <div class="modal-body">
-        <form>
+
+    <!-- Loader -->
+    <ngx-ui-loader [loaderId]="'addmodal-loader'"></ngx-ui-loader>
+    <!-- End of Loader -->
+
+    <form [formGroup]="moduleForm" (ngSubmit)="addModule(modal)">
+        <div class="modal-header">
+            <h5 class="modal-title" id="modal-basic-title">New entity</h5>
+            <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
             <div class="form-group">
                 <label for="name">Title</label>
                 <div class="input-group">
-                    <input type="text" class="form-control" name="name" [(ngModel)]="name">
+                    <input 
+                        type="text"
+                        [className]="
+                            (moduleForm.invalid && (moduleForm.get('name')?.dirty || moduleForm.get('name')?.touched) && moduleForm.get('name')?.errors) ? 
+                            'form-control is-invalid' : (moduleForm.invalid && (moduleForm.get('name')?.dirty || moduleForm.get('name')?.touched)) ? 'form-control is-valid' : 'form-control'" 
+                        id="name" 
+                        name="name"
+                        formControlName="name"
+                        moduleNameValidator
+                        autocomplete="off" 
+                    >
+                    <div *ngIf="moduleForm.invalid && (moduleForm.dirty || moduleForm.touched)" class="invalid-feedback">
+                        <div *ngIf="moduleForm.get('name')?.errors?.required">
+                            Title is required.
+                        </div>
+                        <div *ngIf="moduleForm.get('name')?.errors?.minlength">
+                            Title must be at least 4 characters long.
+                        </div>
+                        <div *ngIf="moduleForm.get('name')?.errors?.nameAlreadyUsed">
+                            Title "{{moduleForm.get('name')?.value}}" is already used by another module.
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="form-group">
-                <label for="slug">Slug</label>
+                <label for="name">Slug</label>
                 <div class="input-group">
-                    <input type="text" class="form-control" name="slug" [(ngModel)]="slug">
+                    <input 
+                        type="text"
+                        [className]="
+                            (moduleForm.invalid && (moduleForm.get('slug')?.dirty || moduleForm.get('slug')?.touched) && moduleForm.get('slug')?.errors) ? 
+                            'form-control is-invalid' : (moduleForm.invalid && (moduleForm.get('slug')?.dirty || moduleForm.get('slug')?.touched)) ? 'form-control is-valid' : 'form-control'" 
+                        id="slug" 
+                        name="slug"
+                        formControlName="slug"
+                        moduleSlugValidator
+                        autocomplete="off" 
+                    >
+                    <div *ngIf="moduleForm.invalid && (moduleForm.dirty || moduleForm.touched)" class="invalid-feedback">
+                        <div *ngIf="moduleForm.get('slug')?.errors?.required">
+                            Slug is required.
+                        </div>
+                        <div *ngIf="moduleForm.get('slug')?.errors?.minlength">
+                            Slug must be at least 4 characters long.
+                        </div>
+                        <div *ngIf="moduleForm.get('slug')?.errors?.slugInvalid">
+                            Invalid format
+                        </div>
+                        <div *ngIf="moduleForm.get('slug')?.errors?.slugAlreadyUsed">
+                            Slug "{{moduleForm.get('slug')?.value}}" is already used by another module.
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="form-group">
-                <label for="icon">Icon</label>
+                <label for="name">Icon</label>
                 <div class="input-group">
-                    <input type="text" class="form-control" name="icon" [(ngModel)]="icon">
+                    <input 
+                        type="text"
+                        [className]="
+                            (moduleForm.invalid && (moduleForm.get('icon')?.dirty || moduleForm.get('icon')?.touched) && moduleForm.get('icon')?.errors) ? 
+                            'form-control is-invalid' : (moduleForm.invalid && (moduleForm.get('icon')?.dirty || moduleForm.get('icon')?.touched)) ? 'form-control is-valid' : 'form-control'" 
+                        id="icon" 
+                        name="icon"
+                        formControlName="icon"
+                        moduleIconValidator
+                        autocomplete="off" 
+                    >
+                    <div *ngIf="moduleForm.invalid && (moduleForm.dirty || moduleForm.touched)" class="invalid-feedback">
+                        <div *ngIf="moduleForm.get('icon')?.errors?.required">
+                            Icon is required.
+                        </div>
+                        <div *ngIf="moduleForm.get('icon')?.errors?.iconInvalid">
+                            Icon "fas-{{moduleForm.get('icon')?.value}}" doesn't exist
+                        </div>
+                    </div>
                 </div>
             </div>
-        </form>
-    </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-outline-danger" (click)="modal.close('Cancel')">Cancel</button>
-        <button type="button" class="btn btn-outline-success" (click)="addModule(modal)">Save</button>
-    </div>
+
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-outline-danger" (click)="modal.close('Cancel')">Cancel</button>
+            <button type="submit" class="btn btn-outline-success" [disabled]="!moduleForm.valid">Save</button>
+        </div>
+    </form>
 </ng-template>

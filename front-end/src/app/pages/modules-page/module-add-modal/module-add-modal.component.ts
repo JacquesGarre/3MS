@@ -1,9 +1,12 @@
 import { Component, OnInit } from '@angular/core';
+import { FormControl, FormGroup, Validators, FormBuilder, ValidatorFn, AbstractControl, FormsModule } from '@angular/forms';
 import { Modules } from '../../../Models/Modules';
 import { ModulesService } from '../../../api/ModulesService';
 import { Router } from '@angular/router';
 import { ModuleComponent } from '../../../module/module.component';
 import { IconName } from "@fortawesome/fontawesome-common-types";
+import { NgxUiLoaderService } from 'ngx-ui-loader';
+
 
 import {
     NgbModal,
@@ -17,24 +20,61 @@ import {
 })
 export class ModuleAddModalComponent implements OnInit {
 
-    modules: Modules[] = [];
-
+    modules: Modules[] = [];  
     closeResult = '';
     name: string = '';
     slug: string = '';
-    icon:IconName = "star";
+    icon: IconName = "star";
 
-    errors: any[] = [];
+    moduleForm = new FormGroup({
+        name: new FormControl(
+            this.name, [
+                Validators.required,
+                Validators.minLength(4)
+            ]
+        ),
+        slug: new FormControl(
+            this.slug, [
+                Validators.required,
+                Validators.minLength(4)
+            ]
+        ),
+        icon: new FormControl(
+            this.icon, [
+                Validators.required
+            ]
+        )
+    });
 
     constructor(
+        private fb: FormBuilder,
         public router:Router,
         private modulesService: ModulesService,
-        private modalService: NgbModal
-    ) { }
+        private modalService: NgbModal,
+        private ngxLoader: NgxUiLoaderService
+    ) { 
+    }
 
     open(content: any) {
-        this.name = '';
-        this.slug = '';
+        this.moduleForm = new FormGroup({
+            name: new FormControl(
+                this.name, [
+                    Validators.required,
+                    Validators.minLength(4)
+                ]
+            ),
+            slug: new FormControl(
+                this.slug, [
+                    Validators.required,
+                    Validators.minLength(4)
+                ]
+            ),
+            icon: new FormControl(
+                this.icon, [
+                    Validators.required
+                ]
+            )
+        });
         this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title', centered: true }).result.then((result) => {
             this.closeResult = `Closed with: ${result}`;
         }, (reason) => {
@@ -43,6 +83,25 @@ export class ModuleAddModalComponent implements OnInit {
     }
     
     ngOnInit(): void {   
+        this.moduleForm = new FormGroup({
+            name: new FormControl(
+                this.name, [
+                    Validators.required,
+                    Validators.minLength(4)
+                ]
+            ),
+            slug: new FormControl(
+                this.slug, [
+                    Validators.required,
+                    Validators.minLength(4)
+                ]
+            ),
+            icon: new FormControl(
+                this.icon, [
+                    Validators.required
+                ]
+            )
+        });
         this.getModules();     
     }
 
@@ -54,46 +113,22 @@ export class ModuleAddModalComponent implements OnInit {
 
 
     addModule(modal: any){
-        this.errors = [];
+        this.ngxLoader.startLoader("addmodal-loader");
         this.getModules();
         let newModule = new Modules();
-        newModule.slug = this.slug;
-        newModule.name = this.name;
+        newModule.slug = this.moduleForm.get('slug')?.value;
+        newModule.name = this.moduleForm.get('name')?.value;
         newModule.active = true;
         newModule.limitPerPage = 50;
         newModule.menuOrder = 5;
-        newModule.icon = this.icon;
-        console.log('newModule');
-        console.log(newModule);
-
-        this.modulesService.getExistingEntities().subscribe(
-            entities => {
-
-                // Testing if entity doesn't exist already
-                entities.resourceNameCollection.map((route: any) => {
-                    let existingEntity = route.replace("App\\Entity\\", "").toLowerCase();
-                    if (existingEntity == newModule.slug!.toLowerCase()) {
-                        this.errors.push('ENTITE ' + existingEntity + ' existe deja, cannot create! ');
-                    }
-                })
-
-                if(this.errors.length == 0) {
-                    this.modulesService.addModule(this.modules, newModule);
-                    this.router.config.push({
-                        path: 'module/' + newModule.slug,
-                        component: ModuleComponent,
-                        data: newModule
-                    });
-                    modal.close();
-                } else {
-                    alert(this.errors);
-                }
-            },
-            error => {
-                console.log(error);
-            }
-        );
-
+        newModule.icon = this.moduleForm.get('icon')?.value;
+        this.modulesService.addModule(this.modules, newModule);
+        this.router.config.push({
+            path: 'module/' + newModule.slug,
+            component: ModuleComponent,
+            data: newModule
+        });
+        modal.close();
     }
 
     private getDismissReason(reason: any): string {

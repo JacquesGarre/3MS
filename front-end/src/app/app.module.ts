@@ -1,11 +1,12 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import {APP_BASE_HREF} from '@angular/common';
+import { APP_BASE_HREF } from '@angular/common';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { ReactiveFormsModule } from '@angular/forms';
 
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { TopbarComponent } from './topbar/topbar.component';
@@ -32,6 +33,9 @@ import { far } from '@fortawesome/free-regular-svg-icons';
 import { fab } from '@fortawesome/free-brands-svg-icons';
 import { FontAwesomeModule, FaIconLibrary } from '@fortawesome/angular-fontawesome';
 import { library } from '@fortawesome/fontawesome-svg-core';
+import { ModuleNameValidatorDirective } from './module-name-validator.directive';
+import { ModuleSlugValidatorDirective } from './module-slug-validator.directive';
+import { ModuleIconValidatorDirective } from './module-icon-validator.directive';
 
 const ngxUiLoaderConfig: NgxUiLoaderConfig = {
     "bgsColor": "red",
@@ -42,7 +46,7 @@ const ngxUiLoaderConfig: NgxUiLoaderConfig = {
     "blur": 10,
     "delay": 0,
     "fastFadeOut": true,
-    "fgsColor": "#ffffff",
+    "fgsColor": "rgba(0, 57, 171, 0.8)",
     "fgsPosition": "center-center",
     "fgsSize": 70,
     "fgsType": "cube-grid",
@@ -52,13 +56,13 @@ const ngxUiLoaderConfig: NgxUiLoaderConfig = {
     "logoUrl": "",
     "masterLoaderId": "master",
     "overlayBorderRadius": "0",
-    "overlayColor": "rgba(0,0,0)",
+    "overlayColor": "rgba(255,255,255)",
     "pbColor": "#4e73df",
     "pbDirection": "ltr",
     "pbThickness": 3,
     "hasProgressBar": true,
-    "text": "",
-    "textColor": "#FFFFFF",
+    "text": "Preparing the magic...",
+    "textColor": "rgba(0, 57, 171, 0.8)",
     "textPosition": "center-center",
 }
 
@@ -73,7 +77,10 @@ const ngxUiLoaderConfig: NgxUiLoaderConfig = {
     HomePageComponent,
     ColorsFormComponent,
     ModuleComponent,
-    ModuleAddModalComponent
+    ModuleAddModalComponent,
+    ModuleNameValidatorDirective,
+    ModuleSlugValidatorDirective,
+    ModuleIconValidatorDirective
   ],
   imports: [
     BrowserModule,
@@ -84,7 +91,8 @@ const ngxUiLoaderConfig: NgxUiLoaderConfig = {
     FormsModule,
     ColorPickerModule,
     NgxUiLoaderModule.forRoot(ngxUiLoaderConfig), 
-    NgxUiLoaderHttpModule.forRoot({ showForeground: false })
+    NgxUiLoaderHttpModule.forRoot({ showForeground: false }),
+    ReactiveFormsModule
   ],
   providers: [{provide: APP_BASE_HREF, useValue: '/'}],
   bootstrap: [AppComponent]

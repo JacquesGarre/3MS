@@ -1,16 +1,19 @@
 <!-- Sidebar -->
 <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar" [style.backgroundColor]="sidebarBgColor">
 
+
     <!-- Sidebar - Brand -->
     <a class="sidebar-brand d-flex align-items-center justify-content-center" routerLink="/" routerLinkActive="active" >
         <div class="sidebar-brand-icon rotate-n-15">
-            <fa-icon [icon]="faLaughWink"></fa-icon>
+            <fa-icon [icon]="['fas', appIcon]" class="mr-2" [style.color]="sidebarFontColor"></fa-icon>
         </div>
-        <div class="sidebar-brand-text mx-3">{{appTitle}}</div>
+        <div class="sidebar-brand-text mx-3" [style.color]="sidebarFontColor">{{appTitle}}</div>
     </a>
 
     <!-- Divider -->
     <hr class="sidebar-divider my-0">
+
+
 
     <!-- Nav Item - Dashboard -->
     <li class="nav-item">
@@ -40,7 +43,7 @@
     <li class="nav-item">
         <a class="nav-link" routerLink="/modules-page" routerLinkActive="active"  [style.color]="sidebarFontColor">
             <fa-icon [icon]="faWrench" class="mr-2" [style.color]="sidebarFontColor"></fa-icon>
-            <span>Modules</span>
+            <span>Entities</span>
             <fa-icon [icon]="faChevronRight" class="float-right mt-1 arrowRight" [style.color]="sidebarFontColor"></fa-icon>
         </a>
     </li>
@@ -70,7 +73,7 @@
 
     <!-- Heading -->
     <div class="sidebar-heading" *ngIf="modules.length > 0">
-        Modules
+        Entities
     </div>
 
     <li class="nav-item" *ngFor="let module of modules">
