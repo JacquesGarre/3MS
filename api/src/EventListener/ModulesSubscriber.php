@@ -14,23 +14,27 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Doctrine\ORM\Events;
 use Doctrine\Common\EventSubscriber;
+use Doctrine\Common\Cache\PhpFileCache;
 
 use Symfony\Bundle\FrameworkBundle\Console\Application;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
+use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\KernelInterface;
 
-define('STDIN',fopen("php://stdin","r"));
 
 class ModulesSubscriber implements EventSubscriber
 {
     private $em;
     private $kernel;
 
-    public function __construct(EntityManagerInterface $em, KernelInterface $kernel, ModulesRepository $repository)
-    {
+    public function __construct(
+        EntityManagerInterface $em, 
+        KernelInterface $kernel, 
+        ModulesRepository $repository
+    )
+    {      
         $this->em = $em;
         $this->kernel = $kernel;
         $this->repository = $repository;
@@ -66,6 +70,9 @@ class ModulesSubscriber implements EventSubscriber
         if ($module instanceof Modules) {
             $entityName = $this->getEntityName($module->getSlug());
             $this->makeEntity($entityName);
+            $this->makeMigration();
+            $this->migrationSync();
+            $this->migrate();
         }
     }
 
@@ -103,18 +110,125 @@ class ModulesSubscriber implements EventSubscriber
 
     // Equivalent of bin/console make:entity $name
     public function makeEntity($name)
-    {
+    {   
         $application = new Application($this->kernel);
         $application->setAutoExit(false);
         $input = new ArrayInput([
             'command' => 'make:entity',
             'name' => $name,
-            '--api-resource' => 'a',
+            '--api-resource' => 'a'
         ]);
+        $input->setInteractive(false);
         $output = new NullOutput();
         $application->run($input, $output);
         return new Response(""); 
     }
+
+    // Equivalent of bin/console doctrine:migrations:diff 
+    public function makeMigration()
+    {
+        $application = new Application($this->kernel);
+        $application->setAutoExit(false);
+        $input = new ArrayInput([
+            'command' => 'doctrine:migrations:diff'
+        ]);
+        $input->setInteractive(false);
+        $output = new BufferedOutput();
+        $application->run($input, $output);
+        $content = $output->fetch();
+
+        return new Response($content);
+    }
+
+    // Equivalent of bin/console doctrine:migrations:migrate
+    public function migrationSync()
+    {
+
+
+        $application = new Application($this->kernel);
+        $application->setAutoExit(false);
+        $input = new ArrayInput([
+           'command' => 'doctrine:migrations:sync-metadata-storage'
+        ]);
+        $input->setInteractive(false);
+        $output = new BufferedOutput();
+        $application->run($input, $output);
+        $content = $output->fetch();
+
+        $log = new ThemeSettings();
+        $log->setName('migration sync status');
+        $log->setValue($content);
+        $this->em->persist($log);
+        $this->em->flush();
+
+        return new Response($content);
+
+
+        // /*
+        // $application = new Application($this->kernel);
+        // $application->setAutoExit(false);
+        // $input = new ArrayInput([
+        //     'command' => 'doctrine:migrations:migrate'
+        // ]);
+        // $input->setInteractive(false);
+        // $output = new NullOutput();
+        // $application->run($input, $output);
+        // return new Response(""); 
+        // */
+    }
+
+        // Equivalent of bin/console doctrine:migrations:migrate
+        public function migrate()
+        {   
+
+            // LOG
+            $application = new Application($this->kernel);
+            $application->setAutoExit(false);
+            $input = new ArrayInput([
+               'command' => 'doctrine:migrations:latest'
+            ]);
+            $input->setInteractive(false);
+            $output = new BufferedOutput();
+            $application->run($input, $output);
+            $content = $output->fetch();
+            $log = new ThemeSettings();
+            $log->setName('Latest NUMBER ');
+            $log->setValue($content);
+            $this->em->persist($log);
+            $this->em->flush();
+
+            // FIRST MIGRATE
+            $application = new Application($this->kernel);
+            $application->setAutoExit(false);
+            $input = new ArrayInput([
+               'command' => 'doctrine:migrations:migrate'
+            ]);
+            $input->setInteractive(false);
+            $output = new BufferedOutput();
+            $application->run($input, $output);
+            $content = $output->fetch();
+            $log = new ThemeSettings();
+            $log->setName('first migrate');
+            $log->setValue($content);
+            $this->em->persist($log);
+            $this->em->flush();
+
+
+            return new Response($content);
+    
+    
+            // /*
+            // $application = new Application($this->kernel);
+            // $application->setAutoExit(false);
+            // $input = new ArrayInput([
+            //     'command' => 'doctrine:migrations:migrate'
+            // ]);
+            // $input->setInteractive(false);
+            // $output = new NullOutput();
+            // $application->run($input, $output);
+            // return new Response(""); 
+            // */
+        }
 
 
 }

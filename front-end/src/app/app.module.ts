@@ -36,6 +36,7 @@ import { library } from '@fortawesome/fontawesome-svg-core';
 import { ModuleNameValidatorDirective } from './module-name-validator.directive';
 import { ModuleSlugValidatorDirective } from './module-slug-validator.directive';
 import { ModuleIconValidatorDirective } from './module-icon-validator.directive';
+import { OrderModule } from 'ngx-order-pipe';
 
 const ngxUiLoaderConfig: NgxUiLoaderConfig = {
     "bgsColor": "red",
@@ -92,7 +93,8 @@ const ngxUiLoaderConfig: NgxUiLoaderConfig = {
     ColorPickerModule,
     NgxUiLoaderModule.forRoot(ngxUiLoaderConfig), 
     NgxUiLoaderHttpModule.forRoot({ showForeground: false }),
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    OrderModule
   ],
   providers: [{provide: APP_BASE_HREF, useValue: '/'}],
   bootstrap: [AppComponent]
@@ -100,6 +102,5 @@ const ngxUiLoaderConfig: NgxUiLoaderConfig = {
 export class AppModule { 
     constructor(library: FaIconLibrary){
         library.addIconPacks(fas, far);
-        //library.add(fab, far, fas);
     }
 }

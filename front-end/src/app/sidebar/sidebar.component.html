@@ -35,7 +35,7 @@
     <li class="nav-item">
         <a class="nav-link" routerLink="/settings-page" routerLinkActive="active" [style.color]="sidebarFontColor">
             <fa-icon [icon]="faCog" class="mr-2" [style.color]="sidebarFontColor"></fa-icon>
-            <span>General</span>
+            <span>Theme</span>
             <fa-icon [icon]="faChevronRight" class="float-right mt-1 arrowRight" [style.color]="sidebarFontColor"></fa-icon>
         </a>
     </li>
@@ -76,7 +76,7 @@
         Entities
     </div>
 
-    <li class="nav-item" *ngFor="let module of modules">
+    <li class="nav-item" *ngFor="let module of modules | orderBy: 'menu_order'">
         <a *ngIf="module.active" class="nav-link" routerLink="/module/{{module.slug}}" routerLinkActive="active"  [style.color]="sidebarFontColor">
             <fa-icon [icon]="['fas', module.icon!]" class="mr-2" [style.color]="sidebarFontColor"></fa-icon>
             <span>{{module.name}}</span>
