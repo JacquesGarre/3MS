@@ -8,6 +8,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\ModulesRepository;
 use Doctrine\ORM\Mapping as ORM;
 
+
 /**
  * @ApiResource()
  * @ApiFilter(SearchFilter::class, properties={"active": "exact"})

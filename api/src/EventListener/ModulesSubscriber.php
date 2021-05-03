@@ -14,7 +14,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Doctrine\ORM\Events;
 use Doctrine\Common\EventSubscriber;
-use Doctrine\Common\Cache\PhpFileCache;
+use Doctrine\DBAL\Schema\Schema;
 
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -22,7 +22,6 @@ use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\KernelInterface;
-
 
 class ModulesSubscriber implements EventSubscriber
 {
@@ -45,7 +44,7 @@ class ModulesSubscriber implements EventSubscriber
         return [
             Events::postPersist,
             Events::postRemove,
-            Events::postUpdate,
+            Events::postUpdate
         ];
     }
 
@@ -63,16 +62,34 @@ class ModulesSubscriber implements EventSubscriber
         return $entityName;
     }
 
-    // After adding a module
+    // After creating a new module
     public function postPersist(LifecycleEventArgs $args): void
     {
         $module = $args->getObject();
         if ($module instanceof Modules) {
-            $entityName = $this->getEntityName($module->getSlug());
-            $this->makeEntity($entityName);
-            $this->makeMigration();
-            $this->migrationSync();
-            $this->migrate();
+
+            // Create the entity
+            $application = new Application($this->kernel);
+            $application->setAutoExit(false);
+            $input = new ArrayInput([
+                'command' => 'make:entity',
+                'name' => $this->getEntityName($module->getSlug()),
+                '--api-resource' => 'a'
+            ]);
+            $input->setInteractive(false);
+            $output = new NullOutput();
+            $application->run($input, $output);
+            
+            // Create the migration file
+            $application = new Application($this->kernel);
+            $application->setAutoExit(false);
+            $input = new ArrayInput([
+                'command' => 'doctrine:migration:diff'
+            ]);
+            $input->setInteractive(false);
+            $output = new NullOutput();
+            $application->run($input, $output);
+
         }
     }
 
@@ -81,18 +98,64 @@ class ModulesSubscriber implements EventSubscriber
     {
         $module = $args->getObject();
         $changes = $this->em->getUnitOfWork()->getEntityChangeSet($module);
+
+        // Only if the slug changes
         if ($module instanceof Modules && array_key_exists('slug', $changes)) {
-            // Remove entity in src/Entities and src/Repository
+
+            $oldClassName = $this->getEntityName($changes['slug'][0]);
+            $newClassName = $this->getEntityName($changes['slug'][1]);
+
+            // Rename entity
             $srcDir = dirname(__FILE__, 2);
-            $entity = $this->getEntityName($changes['slug'][0]);
-            unlink($srcDir.'/Entity/'.$entity.'.php');
-            unlink($srcDir.'/Repository/'.$entity.'Repository.php');
+            rename($srcDir.'/Entity/'.$oldClassName.'.php', $srcDir.'/Entity/'.$newClassName.'.php');
 
-            // Create new entity
-            $entityName = $this->getEntityName($module->getSlug());
-            $this->makeEntity($entityName);
+            // Changing contents of entity class
+            $classFile = $srcDir.'/Entity/'.$newClassName.'.php';
+            $replace = [
+                'use App\Repository\\'.$oldClassName.'Repository;'                 => 'use App\Repository\\'.$newClassName.'Repository;',
+                '@ORM\Entity(repositoryClass='.$oldClassName.'Repository::class)'  => '@ORM\Entity(repositoryClass='.$newClassName.'Repository::class)',
+                'class '.$oldClassName                                             => 'class '.$newClassName,
+            ];
+            file_put_contents(
+                $classFile,
+                str_replace(
+                    array_keys($replace), 
+                    $replace,
+                    file_get_contents($classFile)
+                )
+            );
+
+            // Rename repository
+            rename($srcDir.'/Repository/'.$oldClassName.'Repository.php', $srcDir.'/Repository/'.$newClassName.'Repository.php');
+
+            // Changing contents of repository
+            $classFile = $srcDir.'/Repository/'.$newClassName.'Repository.php';
+            $replace = [
+                'use App\Entity\\'.$oldClassName.';' => 'use App\Entity\\'.$newClassName.';',
+                '@method '.$oldClassName => '@method '.$newClassName,
+                'class '.$oldClassName.'Repository' => 'class '.$newClassName.'Repository',
+                $oldClassName.'::class' => $newClassName.'::class',
+            ];
+            file_put_contents(
+                $classFile,
+                str_replace(
+                    array_keys($replace), 
+                    $replace,
+                    file_get_contents($classFile)
+                )
+            );
+
+            // Create the migration file
+            $application = new Application($this->kernel);
+            $application->setAutoExit(false);
+            $input = new ArrayInput([
+                'command' => 'doctrine:migration:diff'
+            ]);
+            $input->setInteractive(false);
+            $output = new NullOutput();
+            $application->run($input, $output);
+
         }
-
     }
 
     // After removing a module
@@ -100,135 +163,28 @@ class ModulesSubscriber implements EventSubscriber
     {   
         $module = $args->getObject();
         if ($module instanceof Modules) {
+
             // Remove entity in src/Entities and src/Repository
             $srcDir = dirname(__FILE__, 2);
             $entity = $this->getEntityName($module->getSlug());
             unlink($srcDir.'/Entity/'.$entity.'.php');
             unlink($srcDir.'/Repository/'.$entity.'Repository.php');
-        }
-    }
-
-    // Equivalent of bin/console make:entity $name
-    public function makeEntity($name)
-    {   
-        $application = new Application($this->kernel);
-        $application->setAutoExit(false);
-        $input = new ArrayInput([
-            'command' => 'make:entity',
-            'name' => $name,
-            '--api-resource' => 'a'
-        ]);
-        $input->setInteractive(false);
-        $output = new NullOutput();
-        $application->run($input, $output);
-        return new Response(""); 
-    }
-
-    // Equivalent of bin/console doctrine:migrations:diff 
-    public function makeMigration()
-    {
-        $application = new Application($this->kernel);
-        $application->setAutoExit(false);
-        $input = new ArrayInput([
-            'command' => 'doctrine:migrations:diff'
-        ]);
-        $input->setInteractive(false);
-        $output = new BufferedOutput();
-        $application->run($input, $output);
-        $content = $output->fetch();
-
-        return new Response($content);
-    }
-
-    // Equivalent of bin/console doctrine:migrations:migrate
-    public function migrationSync()
-    {
-
-
-        $application = new Application($this->kernel);
-        $application->setAutoExit(false);
-        $input = new ArrayInput([
-           'command' => 'doctrine:migrations:sync-metadata-storage'
-        ]);
-        $input->setInteractive(false);
-        $output = new BufferedOutput();
-        $application->run($input, $output);
-        $content = $output->fetch();
-
-        $log = new ThemeSettings();
-        $log->setName('migration sync status');
-        $log->setValue($content);
-        $this->em->persist($log);
-        $this->em->flush();
-
-        return new Response($content);
-
-
-        // /*
-        // $application = new Application($this->kernel);
-        // $application->setAutoExit(false);
-        // $input = new ArrayInput([
-        //     'command' => 'doctrine:migrations:migrate'
-        // ]);
-        // $input->setInteractive(false);
-        // $output = new NullOutput();
-        // $application->run($input, $output);
-        // return new Response(""); 
-        // */
-    }
-
-        // Equivalent of bin/console doctrine:migrations:migrate
-        public function migrate()
-        {   
-
-            // LOG
+            
+            // Create the migration file
             $application = new Application($this->kernel);
             $application->setAutoExit(false);
             $input = new ArrayInput([
-               'command' => 'doctrine:migrations:latest'
+                'command' => 'doctrine:migration:diff'
             ]);
             $input->setInteractive(false);
-            $output = new BufferedOutput();
+            $output = new NullOutput();
             $application->run($input, $output);
-            $content = $output->fetch();
-            $log = new ThemeSettings();
-            $log->setName('Latest NUMBER ');
-            $log->setValue($content);
-            $this->em->persist($log);
-            $this->em->flush();
 
-            // FIRST MIGRATE
-            $application = new Application($this->kernel);
-            $application->setAutoExit(false);
-            $input = new ArrayInput([
-               'command' => 'doctrine:migrations:migrate'
-            ]);
-            $input->setInteractive(false);
-            $output = new BufferedOutput();
-            $application->run($input, $output);
-            $content = $output->fetch();
-            $log = new ThemeSettings();
-            $log->setName('first migrate');
-            $log->setValue($content);
-            $this->em->persist($log);
-            $this->em->flush();
-
-
-            return new Response($content);
-    
-    
-            // /*
-            // $application = new Application($this->kernel);
-            // $application->setAutoExit(false);
-            // $input = new ArrayInput([
-            //     'command' => 'doctrine:migrations:migrate'
-            // ]);
-            // $input->setInteractive(false);
-            // $output = new NullOutput();
-            // $application->run($input, $output);
-            // return new Response(""); 
-            // */
         }
+    }
+
+
+
 
 
 }
