@@ -23,6 +23,9 @@ use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\KernelInterface;
 
+use App\Helpers\ModulesHelper;
+use Symfony\Component\HttpKernel\Event\ResponseEvent;
+
 class ModulesSubscriber implements EventSubscriber
 {
     private $em;
@@ -48,20 +51,6 @@ class ModulesSubscriber implements EventSubscriber
         ];
     }
 
-    private function getEntityName($slug): string
-    {
-        $entityName = '';
-        if (strpos($slug, '-') === FALSE) {
-            $entityName = ucfirst(strtolower($slug));
-        } else {
-            $words = explode('-', $slug);
-            foreach ($words as $word) {
-                $entityName .= ucfirst(strtolower($word));
-            }
-        }
-        return $entityName;
-    }
-
     // After creating a new module
     public function postPersist(LifecycleEventArgs $args): void
     {
@@ -73,7 +62,7 @@ class ModulesSubscriber implements EventSubscriber
             $application->setAutoExit(false);
             $input = new ArrayInput([
                 'command' => 'make:entity',
-                'name' => $this->getEntityName($module->getSlug()),
+                'name' => ModulesHelper::getEntityName($module->getSlug()),
                 '--api-resource' => 'a'
             ]);
             $input->setInteractive(false);
@@ -102,8 +91,8 @@ class ModulesSubscriber implements EventSubscriber
         // Only if the slug changes
         if ($module instanceof Modules && array_key_exists('slug', $changes)) {
 
-            $oldClassName = $this->getEntityName($changes['slug'][0]);
-            $newClassName = $this->getEntityName($changes['slug'][1]);
+            $oldClassName = ModulesHelper::getEntityName($changes['slug'][0]);
+            $newClassName = ModulesHelper::getEntityName($changes['slug'][1]);
 
             // Rename entity
             $srcDir = dirname(__FILE__, 2);
@@ -166,7 +155,7 @@ class ModulesSubscriber implements EventSubscriber
 
             // Remove entity in src/Entities and src/Repository
             $srcDir = dirname(__FILE__, 2);
-            $entity = $this->getEntityName($module->getSlug());
+            $entity = ModulesHelper::getEntityName($module->getSlug());
             unlink($srcDir.'/Entity/'.$entity.'.php');
             unlink($srcDir.'/Repository/'.$entity.'Repository.php');
             
