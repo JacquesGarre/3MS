@@ -7,6 +7,7 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 
 const apiUrl = 'http://localhost:8000/api';
 const baseUrl = apiUrl+'/modules';
+const migrationUrl = apiUrl+'/operations/migrate';
 
 
 @Injectable({
@@ -32,6 +33,10 @@ export class ModulesService {
         return this.http.get<Modules[]>(baseUrl);
     }
 
+    runMigration(): Observable<string> {
+        return this.http.get<string>(migrationUrl);
+    }
+
     getAllActive(): Observable<Modules[]> {
         return this.http.get<Modules[]>(`${baseUrl}?active=true`);
     }
@@ -40,7 +45,8 @@ export class ModulesService {
         return this.http.get(`${baseUrl}/${id}`);
     }
 
-    addModule(modules: Modules[], module: Modules) {
+    addModule(modules: Modules[], module: Modules, modal: any) {
+        this.ngxLoader.startLoader("addmodal-loader");
         this.getAll()
         .subscribe(
             data => {
@@ -49,6 +55,15 @@ export class ModulesService {
                     module => {
                         modules.push(module);
                         this.modulesSource.next(modules);
+                        this.runMigration().subscribe(
+                            response => {
+                                this.ngxLoader.stopLoader("addmodal-loader");
+                                modal.close();
+                            },
+                            error => {
+                                console.log(error)
+                            }
+                        )
                     },
                     error => {
                         console.log(error);
@@ -77,7 +92,6 @@ export class ModulesService {
         modules = modules.filter((module) => {
             return module.id !== id
         });
-        console.log(modules);
         this.modulesSource.next(modules);
         return this.http.delete(`${baseUrl}/${id}`);
     }

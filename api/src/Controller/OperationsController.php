@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
@@ -30,7 +30,7 @@ class OperationsController extends AbstractController
      * @Route("/api/operations/migrate", methods={"GET"})
      * 
      */
-    public function migrate(Request $request): Response
+    public function migrate(Request $request): JsonResponse
     {   
 
         $token = $request->query->get('token');
@@ -44,7 +44,7 @@ class OperationsController extends AbstractController
         $input->setInteractive(false);
         $output = new BufferedOutput();
         $application->run($input, $output);
-        return new Response($output->fetch());
+        return new JsonResponse($output->fetch());
 
     }
 }

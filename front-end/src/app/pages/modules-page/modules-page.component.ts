@@ -5,6 +5,8 @@ import { faTrashAlt, faPencilAlt } from '@fortawesome/free-solid-svg-icons';
 import { IconName } from "@fortawesome/fontawesome-common-types";
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { FormControl, FormGroup, Validators, FormBuilder, ValidatorFn, AbstractControl, FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { ModuleComponent } from '../../module/module.component';
 
 import {
     NgbModal,
@@ -17,13 +19,11 @@ import {
 })
 export class ModulesPageComponent implements OnInit {
 
-    
     closeResult = '';
     faTrashAlt = faTrashAlt;
     faPencilAlt = faPencilAlt;
     module: Modules = {};
-
-    public modules: Modules[] = []; // modules
+    public modules: Modules[] = []; 
 
     editModuleForm = new FormGroup({
         name: new FormControl(
@@ -48,7 +48,8 @@ export class ModulesPageComponent implements OnInit {
     constructor(
         private modulesService: ModulesService,
         private modalService: NgbModal,
-        private ngxLoader: NgxUiLoaderService
+        private ngxLoader: NgxUiLoaderService,
+        public router: Router
     ) { 
         this.modulesService.modules.subscribe(modules => this.modules = modules);
     }
@@ -71,19 +72,31 @@ export class ModulesPageComponent implements OnInit {
         }, (reason) => {
             this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
         });
-        
-
     }
 
     confirmDelete(modal: any, module: Modules){
+        this.ngxLoader.startLoader("addmodal-loader");
         this.modulesService.delete(this.modules, module.id).subscribe(
             response => {
-                console.log(response);
+                this.modulesService.runMigration().subscribe(
+                    response => {
+                        this.router.config.map((route, key) => {
+                            if (route.path === 'module/' + module.slug){
+                                this.router.config.splice(key, 1);
+                            }
+                        });
+                        this.ngxLoader.stopLoader("addmodal-loader");
+                        modal.close();
+                    },
+                    error => {
+                        console.log(error)
+                    }
+                )
             },
             error => {
                 console.log(error);
         });
-        modal.close();
+        
     }
 
 
@@ -116,17 +129,37 @@ export class ModulesPageComponent implements OnInit {
     }
 
     updateModule(modal: any) {
+        this.ngxLoader.startLoader("addmodal-loader");
+        const oldSlug = this.module.slug;
         this.module.slug = this.editModuleForm.get('slug')?.value;
         this.module.name = this.editModuleForm.get('name')?.value;
         this.module.icon = this.editModuleForm.get('icon')?.value;
         this.modulesService.update(this.modules, this.module.id, this.module).subscribe(
             response => {
                 console.log(response);
+                this.modulesService.runMigration().subscribe(
+                    response => {
+                        this.router.config.map((route, key) => {
+                            if (route.path === 'module/' + oldSlug){
+                                this.router.config[key] = {
+                                    path: 'module/' + this.module.slug,
+                                    component: ModuleComponent,
+                                    data: this.module
+                                };
+                            }
+                        });
+                        this.ngxLoader.stopLoader("addmodal-loader");
+                        modal.close();
+                    },
+                    error => {
+                        console.log(error)
+                    }
+                )
             },
             error => {
                 console.log(error);
         });
-        modal.close();
+        
     }
 
     ngOnInit(): void {

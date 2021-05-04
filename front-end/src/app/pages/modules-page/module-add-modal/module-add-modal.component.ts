@@ -113,7 +113,6 @@ export class ModuleAddModalComponent implements OnInit {
 
 
     addModule(modal: any){
-        this.ngxLoader.startLoader("addmodal-loader");
         this.getModules();
         let newModule = new Modules();
         newModule.slug = this.moduleForm.get('slug')?.value;
@@ -122,13 +121,12 @@ export class ModuleAddModalComponent implements OnInit {
         newModule.limitPerPage = 50;
         newModule.menuOrder = 5;
         newModule.icon = this.moduleForm.get('icon')?.value;
-        this.modulesService.addModule(this.modules, newModule);
+        this.modulesService.addModule(this.modules, newModule, modal);
         this.router.config.push({
             path: 'module/' + newModule.slug,
             component: ModuleComponent,
             data: newModule
         });
-        modal.close();
     }
 
     private getDismissReason(reason: any): string {
