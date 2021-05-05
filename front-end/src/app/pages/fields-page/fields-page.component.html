@@ -1,0 +1,15 @@
+<div class="row">
+
+    <!-- Loader -->
+    <ngx-ui-loader [loaderId]="'page-loader'"></ngx-ui-loader>
+    <!-- End of Loader -->
+
+    <!-- Content Column -->
+    <div class="col-lg-12 mb-4">
+
+        <h3 *ngIf="inputs.length == 0" class="mb-4">Start by creating a new field for {{module.name}} module!</h3>
+        <app-input-add-modal [module]="module"></app-input-add-modal>
+
+    </div>
+
+</div>

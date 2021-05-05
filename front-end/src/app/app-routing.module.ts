@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes, Router } from '@angular/router';
 import { SettingsPageComponent } from './pages/settings-page/settings-page.component';
 import { ModulesPageComponent } from './pages/modules-page/modules-page.component';
+import { FieldsPageComponent } from './pages/fields-page/fields-page.component';
 import { HomePageComponent } from './pages/home-page/home-page.component';
 import { ModuleComponent } from './module/module.component';
 import { ModulesService } from './api/ModulesService';
@@ -35,6 +36,11 @@ export class AppRoutingModule {
                     this.router.config.push({
                         path: 'module/' + module.slug,
                         component: ModuleComponent,
+                        data: module
+                    });
+                    this.router.config.push({
+                        path: 'modules-page/' + module.slug + '/fields-page',
+                        component: FieldsPageComponent,
                         data: module
                     });
                 })

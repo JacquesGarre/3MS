@@ -137,38 +137,18 @@
                     (click)="editModule(content, module)">
                     <fa-icon [icon]="faPencilAlt"></fa-icon>
                 </h6>
-                <button class="m-0 font-weight-bold float-right btn btn-sm btn-outline-success" *ngIf="module.active"
+                <button class="m-0 font-weight-bold float-right btn btn-sm btn-outline-success  ml-2" *ngIf="module.active"
                     (click)="toggleModule(module)">
                     <fa-icon [icon]="['fas', 'eye']"></fa-icon>
                 </button>
-                <button class="m-0 font-weight-bold float-right btn btn-sm btn-outline-danger" *ngIf="!module.active"
+                <button class="m-0 font-weight-bold float-right btn btn-sm btn-outline-danger ml-2" *ngIf="!module.active"
                     (click)="toggleModule(module)">
                     <fa-icon [icon]="['fas', 'eye-slash']"></fa-icon>
                 </button>
-            </div>
-            <div class="card-body">
-                Formulaire inside avec un dropdown
+                <h6 class="m-0 font-weight-bold float-right btn btn-sm btn-outline-primary ml-2" routerLink="/modules-page/{{module.slug}}/fields-page" routerLinkActive="active" >
+                    <fa-icon [icon]="faCog"></fa-icon>
+                </h6>
             </div>
         </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     </div>
-
 </div>

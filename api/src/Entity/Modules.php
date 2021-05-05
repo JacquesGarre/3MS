@@ -6,6 +6,8 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\ModulesRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 
@@ -35,11 +37,6 @@ class Modules
     private $name;
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $form_id;
-
-    /**
      * @ORM\Column(type="boolean")
      */
     private $active;
@@ -58,6 +55,17 @@ class Modules
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $icon;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Inputs::class, mappedBy="module", orphanRemoval=true)
+     */
+    private $inputs;
+
+    public function __construct()
+    {
+        $this->fields = new ArrayCollection();
+        $this->inputs = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -84,18 +92,6 @@ class Modules
     public function setName(string $name): self
     {
         $this->name = $name;
-
-        return $this;
-    }
-
-    public function getFormId(): ?int
-    {
-        return $this->form_id;
-    }
-
-    public function setFormId(?int $form_id): self
-    {
-        $this->form_id = $form_id;
 
         return $this;
     }
@@ -144,6 +140,37 @@ class Modules
     public function setIcon(?string $icon): self
     {
         $this->icon = $icon;
+
+        return $this;
+    }
+
+
+    /**
+     * @return Collection|Inputs[]
+     */
+    public function getInputs(): Collection
+    {
+        return $this->inputs;
+    }
+
+    public function addInput(Inputs $input): self
+    {
+        if (!$this->inputs->contains($input)) {
+            $this->inputs[] = $input;
+            $input->setModule($this);
+        }
+
+        return $this;
+    }
+
+    public function removeInput(Inputs $input): self
+    {
+        if ($this->inputs->removeElement($input)) {
+            // set the owning side to null (unless already changed)
+            if ($input->getModule() === $this) {
+                $input->setModule(null);
+            }
+        }
 
         return $this;
     }

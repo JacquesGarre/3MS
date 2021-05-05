@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { FormControl, FormGroup, Validators, FormBuilder, ValidatorFn, AbstractControl, FormsModule } from '@angular/forms';
 import { Modules } from '../../../Models/Modules';
+import { Inputs } from '../../../Models/Inputs';
 import { ModulesService } from '../../../api/ModulesService';
 import { Router } from '@angular/router';
 import { ModuleComponent } from '../../../module/module.component';
@@ -15,35 +16,43 @@ import {
 } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
-    selector: 'app-module-add-modal',
-    templateUrl: './module-add-modal.component.html',
-    styleUrls: ['./module-add-modal.component.css']
+    selector: 'app-input-add-modal',
+    templateUrl: './input-add-modal.component.html',
+    styleUrls: ['./input-add-modal.component.css']
 })
-export class ModuleAddModalComponent implements OnInit {
+export class InputAddModalComponent implements OnInit {
+
+    @Input() module: Modules;
 
     modules: Modules[] = [];  
     closeResult = '';
-    name: string = '';
-    slug: string = '';
-    icon: IconName = "star";
 
-    moduleForm = new FormGroup({
+    name: string = '';
+    type: string = '';
+    sqlType: string = '';
+    sqlLength: number | null = null;
+
+    inputForm = new FormGroup({
         name: new FormControl(
             this.name, [
                 Validators.required,
-                Validators.minLength(4)
+                Validators.minLength(3)
             ]
         ),
-        slug: new FormControl(
-            this.slug, [
+        type: new FormControl(
+            this.type, [
                 Validators.required,
-                Validators.minLength(4)
+                Validators.minLength(3)
             ]
         ),
-        icon: new FormControl(
-            this.icon, [
-                Validators.required
+        sqlType: new FormControl(
+            this.sqlType, [
+                Validators.required,
+                Validators.minLength(3)
             ]
+        ),
+        sqlLength: new FormControl(
+            this.sqlLength, []
         )
     });
 
@@ -54,26 +63,31 @@ export class ModuleAddModalComponent implements OnInit {
         private modalService: NgbModal,
         private ngxLoader: NgxUiLoaderService
     ) { 
+        this.module = {};
     }
 
     open(content: any) {
-        this.moduleForm = new FormGroup({
+        this.inputForm = new FormGroup({
             name: new FormControl(
                 this.name, [
                     Validators.required,
-                    Validators.minLength(4)
+                    Validators.minLength(3)
                 ]
             ),
-            slug: new FormControl(
-                this.slug, [
+            type: new FormControl(
+                this.type, [
                     Validators.required,
-                    Validators.minLength(4)
+                    Validators.minLength(3)
                 ]
             ),
-            icon: new FormControl(
-                this.icon, [
-                    Validators.required
+            sqlType: new FormControl(
+                this.sqlType, [
+                    Validators.required,
+                    Validators.minLength(3)
                 ]
+            ),
+            sqlLength: new FormControl(
+                this.sqlLength, []
             )
         });
         this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title', centered: true }).result.then((result) => {
@@ -84,23 +98,27 @@ export class ModuleAddModalComponent implements OnInit {
     }
     
     ngOnInit(): void {   
-        this.moduleForm = new FormGroup({
+        this.inputForm = new FormGroup({
             name: new FormControl(
                 this.name, [
                     Validators.required,
-                    Validators.minLength(4)
+                    Validators.minLength(3)
                 ]
             ),
-            slug: new FormControl(
-                this.slug, [
+            type: new FormControl(
+                this.type, [
                     Validators.required,
-                    Validators.minLength(4)
+                    Validators.minLength(3)
                 ]
             ),
-            icon: new FormControl(
-                this.icon, [
-                    Validators.required
+            sqlType: new FormControl(
+                this.sqlType, [
+                    Validators.required,
+                    Validators.minLength(3)
                 ]
+            ),
+            sqlLength: new FormControl(
+                this.sqlLength, []
             )
         });
         this.getModules();     
@@ -113,26 +131,24 @@ export class ModuleAddModalComponent implements OnInit {
     }
 
 
-    addModule(modal: any){
-        this.getModules();
-        let newModule = new Modules();
-        newModule.slug = this.moduleForm.get('slug')?.value;
-        newModule.name = this.moduleForm.get('name')?.value;
-        newModule.active = true;
-        newModule.limitPerPage = 50;
-        newModule.menuOrder = 5;
-        newModule.icon = this.moduleForm.get('icon')?.value;
-        this.modulesService.addModule(this.modules, newModule, modal);
-        this.router.config.push({
-            path: 'module/' + newModule.slug,
-            component: ModuleComponent,
-            data: newModule
-        });
-        this.router.config.push({
-            path: 'modules-page/' + newModule.slug + '/fields-page',
-            component: FieldsPageComponent,
-            data: newModule
-        });
+    addInput(modal: any){
+        let newInput = new Inputs();
+        newInput.moduleId = this.module.id;
+        newInput.name = this.inputForm.get('name')?.value;
+        newInput.type = this.inputForm.get('type')?.value;
+        newInput.sqlType = this.inputForm.get('sqlType')?.value;
+        newInput.sqlLength = this.inputForm.get('sqlLength')?.value;
+        newInput.required = true;
+        newInput.addShow = true;
+        newInput.editShow = true;
+        newInput.editReadonly = true;
+        newInput.tableShow = true;
+        newInput.tableReadonly = true;
+        newInput.tableFilter = true;
+        newInput.tableOrder = true;
+
+        console.log('newInput;');
+        console.log(newInput);
     }
 
     private getDismissReason(reason: any): string {

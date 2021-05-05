@@ -1,0 +1,116 @@
+<button class="btn btn-sm btn-outline-primary mb-4" (click)="open(content)">New field <fa-icon [icon]="['fas', 'plus']" class="ml-2"></fa-icon></button>
+
+<ng-template #content let-modal>
+
+    <!-- Loader -->
+    <ngx-ui-loader [loaderId]="'addmodal-loader'"></ngx-ui-loader>
+    <!-- End of Loader -->
+
+    <form [formGroup]="inputForm" (ngSubmit)="addInput(modal)">
+        <div class="modal-header">
+            <h5 class="modal-title" id="modal-basic-title">New field</h5>
+            <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label for="name">Input name</label>
+                <div class="input-group">
+                    <input 
+                        type="text"
+                        [className]="
+                            (inputForm.invalid && (inputForm.get('name')?.dirty || inputForm.get('name')?.touched) && inputForm.get('name')?.errors) ? 
+                            'form-control is-invalid' : (inputForm.invalid && (inputForm.get('name')?.dirty || inputForm.get('name')?.touched)) ? 'form-control is-valid' : 'form-control'" 
+                        id="name" 
+                        name="name"
+                        formControlName="name"
+                        autocomplete="off" 
+                    >
+                    <div *ngIf="inputForm.invalid && (inputForm.dirty || inputForm.touched)" class="invalid-feedback">
+                        <div *ngIf="inputForm.get('name')?.errors?.required">
+                            Input name is required.
+                        </div>
+                        <div *ngIf="inputForm.get('name')?.errors?.minlength">
+                            Input name must be at least 3 characters long.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="name">Input type</label>
+                <div class="input-group">
+                    <input 
+                        type="text"
+                        [className]="
+                            (inputForm.invalid && (inputForm.get('type')?.dirty || inputForm.get('type')?.touched) && inputForm.get('type')?.errors) ? 
+                            'form-control is-invalid' : (inputForm.invalid && (inputForm.get('type')?.dirty || inputForm.get('type')?.touched)) ? 'form-control is-valid' : 'form-control'" 
+                        id="type" 
+                        name="type"
+                        formControlName="type"
+                        autocomplete="off" 
+                    >
+                    <div *ngIf="inputForm.invalid && (inputForm.dirty || inputForm.touched)" class="invalid-feedback">
+                        <div *ngIf="inputForm.get('type')?.errors?.required">
+                            Input type is required.
+                        </div>
+                        <div *ngIf="inputForm.get('type')?.errors?.minlength">
+                            Input type must be at least 3 characters long.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="name">SQL type</label>
+                <div class="input-group">
+                    <input 
+                        type="text"
+                        [className]="
+                            (inputForm.invalid && (inputForm.get('sqlLength')?.dirty || inputForm.get('sqlType')?.touched) && inputForm.get('sqlType')?.errors) ? 
+                            'form-control is-invalid' : (inputForm.invalid && (inputForm.get('sqlType')?.dirty || inputForm.get('sqlType')?.touched)) ? 'form-control is-valid' : 'form-control'" 
+                        id="sqlType" 
+                        name="sqlType"
+                        formControlName="sqlType"
+                        autocomplete="off" 
+                    >
+                    <div *ngIf="inputForm.invalid && (inputForm.dirty || inputForm.touched)" class="invalid-feedback">
+                        <div *ngIf="inputForm.get('sqlType')?.errors?.required">
+                            SQL type is required.
+                        </div>
+                        <div *ngIf="inputForm.get('sqlType')?.errors?.minlength">
+                            SQL type must be at least 3 characters long.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="name">SQL length</label>
+                <div class="input-group">
+                    <input 
+                        type="text"
+                        [className]="
+                            (inputForm.invalid && (inputForm.get('sqlLength')?.dirty || inputForm.get('sqlLength')?.touched) && inputForm.get('sqlLength')?.errors) ? 
+                            'form-control is-invalid' : (inputForm.invalid && (inputForm.get('sqlLength')?.dirty || inputForm.get('sqlLength')?.touched)) ? 'form-control is-valid' : 'form-control'" 
+                        id="sqlLength" 
+                        name="sqlLength"
+                        formControlName="sqlLength"
+                        autocomplete="off" 
+                    >
+                    <div *ngIf="inputForm.invalid && (inputForm.dirty || inputForm.touched)" class="invalid-feedback">
+                        <div *ngIf="inputForm.get('sqlLength')?.errors?.required">
+                            SQL length is required.
+                        </div>
+                        <div *ngIf="inputForm.get('sqlLength')?.errors?.minlength">
+                            SQL length must be at least 3 characters long.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-outline-danger" (click)="modal.close('Cancel')">Cancel</button>
+            <button type="submit" class="btn btn-outline-success" [disabled]="!inputForm.valid">Save</button>
+        </div>
+    </form>
+</ng-template>

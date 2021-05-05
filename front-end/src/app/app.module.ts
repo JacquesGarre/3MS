@@ -37,6 +37,8 @@ import { ModuleNameValidatorDirective } from './module-name-validator.directive'
 import { ModuleSlugValidatorDirective } from './module-slug-validator.directive';
 import { ModuleIconValidatorDirective } from './module-icon-validator.directive';
 import { OrderModule } from 'ngx-order-pipe';
+import { FieldsPageComponent } from './pages/fields-page/fields-page.component';
+import { InputAddModalComponent } from './pages/fields-page/input-add-modal/input-add-modal.component';
 
 const ngxUiLoaderConfig: NgxUiLoaderConfig = {
     "bgsColor": "red",
@@ -81,7 +83,9 @@ const ngxUiLoaderConfig: NgxUiLoaderConfig = {
     ModuleAddModalComponent,
     ModuleNameValidatorDirective,
     ModuleSlugValidatorDirective,
-    ModuleIconValidatorDirective
+    ModuleIconValidatorDirective,
+    FieldsPageComponent,
+    InputAddModalComponent
   ],
   imports: [
     BrowserModule,

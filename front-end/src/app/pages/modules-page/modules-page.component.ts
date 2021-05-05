@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { Modules } from '../../Models/Modules';
 import { ModulesService } from '../../api/ModulesService';
-import { faTrashAlt, faPencilAlt } from '@fortawesome/free-solid-svg-icons';
+import { faTrashAlt, faPencilAlt, faCog } from '@fortawesome/free-solid-svg-icons';
 import { IconName } from "@fortawesome/fontawesome-common-types";
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { FormControl, FormGroup, Validators, FormBuilder, ValidatorFn, AbstractControl, FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ModuleComponent } from '../../module/module.component';
-
+import { FieldsPageComponent } from '../../pages/fields-page/fields-page.component';
 import {
     NgbModal,
     ModalDismissReasons
@@ -22,6 +22,7 @@ export class ModulesPageComponent implements OnInit {
     closeResult = '';
     faTrashAlt = faTrashAlt;
     faPencilAlt = faPencilAlt;
+    faCog = faCog;
     module: Modules = {};
     public modules: Modules[] = []; 
 
@@ -84,6 +85,9 @@ export class ModulesPageComponent implements OnInit {
                             if (route.path === 'module/' + module.slug){
                                 this.router.config.splice(key, 1);
                             }
+                            if (route.path ===  'modules-page/' + module.slug + '/fields-page'){
+                                this.router.config.splice(key, 1);
+                            }
                         });
                         this.ngxLoader.stopLoader("addmodal-loader");
                         modal.close();
@@ -144,6 +148,13 @@ export class ModulesPageComponent implements OnInit {
                                 this.router.config[key] = {
                                     path: 'module/' + this.module.slug,
                                     component: ModuleComponent,
+                                    data: this.module
+                                };
+                            }
+                            if (route.path === 'modules-page/' + oldSlug + '/fields-page'){
+                                this.router.config[key] = {
+                                    path: 'modules-page/' + this.module.slug + '/fields-page',
+                                    component: FieldsPageComponent,
                                     data: this.module
                                 };
                             }

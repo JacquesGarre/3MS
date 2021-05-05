@@ -5,9 +5,7 @@ export class Modules {
     slug?: string;
     name?: string;
     icon?: IconName;
-    formId?: number;
     active?: boolean;
     limitPerPage?: number;
     menuOrder?: number;
-
 }
